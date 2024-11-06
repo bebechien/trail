@@ -1,10 +1,11 @@
 import random
-import datetime
 
 from game import IGameAI
 
 
 class GameAI(IGameAI):
+    """Class representing a game AI that uses a traditional script-based approach"""
+
     def random_event(self):
         """Triggers a random event."""
         events = [

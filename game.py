@@ -3,16 +3,18 @@ import datetime
 
 
 class IGameAI:
+    """Interface Class representing a game AI"""
     app = None
 
     def __init__(self, app):
         self.app = app
 
     def random_event(self):
-        pass
+        """Function generating a random event"""
 
 
 class GameApp:
+    """Class representing a game application"""
     supply = 500
     ly_traveled = 0
     current_date = datetime.date(2345, 3, 1)  # Start on March 1st, 2345
@@ -118,9 +120,11 @@ class GameApp:
         return False
 
     def random_event(self):
+        """Generate a random event"""
         self.ai.random_event()
 
     def update_value(self, supply, health, day):
+        """Update class values"""
         if supply is not None:
             self.supply += supply
 

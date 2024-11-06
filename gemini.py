@@ -1,7 +1,6 @@
 import os
 import json
 import jsonschema
-import random
 import google.generativeai as genai
 
 from game import IGameAI
@@ -24,8 +23,11 @@ __event_json_schema__ = {
 
 
 class GameAI(IGameAI):
+    """Class representing a game AI implemented with Gemini"""
+    model = None
+
     def __init__(self, app):
-        self.app = app
+        super().__init__(app)
         genai.configure(api_key=os.environ["GEMINI_API_KEY"])
         self.model = genai.GenerativeModel('gemini-1.5-flash')
 
@@ -39,7 +41,6 @@ class GameAI(IGameAI):
                 try:
                     jsonschema.validate(
                         instance=event, schema=__event_json_schema__)
-                    print(event_string)
                     return event
                 except jsonschema.exceptions.ValidationError:
                     print(event_string)
@@ -56,6 +57,7 @@ class GameAI(IGameAI):
         event = self.generate_event()
 
         print(f"\nEvent: {event['text']}")
+        print(f"\nEffect: {event['effect']}")
         # Execute the effect of the event
         effect = event['effect']
         self.app.update_value(effect.get('supply', None), effect.get(

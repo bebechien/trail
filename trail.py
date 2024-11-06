@@ -1,8 +1,8 @@
 import random
 
 from game import GameApp
-from scripted import GameAI
-# from gemini import GameAI
+#from scripted import GameAI
+from gemini import GameAI
 
 trail = GameApp()
 game_ai = GameAI(trail)
