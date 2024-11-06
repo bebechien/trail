@@ -55,9 +55,7 @@ class GameAI(IGameAI):
     def random_event(self):
         """Triggers a random event."""
         event = self.generate_event()
-
-        print(f"\nEvent: {event['text']}")
-        print(f"\nEffect: {event['effect']}")
+        print(f"\nEvent: {event['text']}\n `-> Effect: {event['effect']}")
         # Execute the effect of the event
         effect = event['effect']
         self.app.update_value(effect.get('supply', None), effect.get(
