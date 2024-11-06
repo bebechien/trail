@@ -2,14 +2,27 @@ import random
 import datetime
 
 
+class IGameAI:
+    app = None
+
+    def __init__(self, app):
+        self.app = app
+
+    def random_event(self):
+        pass
+
+
 class GameApp:
     supply = 500
     ly_traveled = 0
     current_date = datetime.date(2345, 3, 1)  # Start on March 1st, 2345
     party = []
+    ai = None
 
-    def initialize_game(self):
+    def initialize_game(self, ai):
         """Sets initial game values."""
+        self.ai = ai
+
         party_size = int(input("How many people are in your party? "))
         for i in range(party_size):
             name = input(f"Enter name for person {i+1}: ")
@@ -105,22 +118,15 @@ class GameApp:
         return False
 
     def random_event(self):
-        """Triggers a random event."""
-        print(self.supply)
-        events = [
-            {"text": "You find abandoned supplies! Gain 50 units of supply.",
-                "effect": lambda: (setattr(self, "supply", self.supply + 50))},
-            {"text": "Oxen wander off! Spend a day searching.", "effect": lambda: (
-                setattr(self, "current_date", self.current_date + datetime.timedelta(days=1)))},
-            {"text": "A party member gets sick. Lose some health.", "effect": lambda: random.choice(
-                self.party).update({"health": max(0, random.choice(self.party)["health"] - 2)})},
-            {"text": "You encounter friendly travelers! Gain some health.", "effect": lambda: random.choice(
-                self.party).update({"health": min(5, random.choice(self.party)["health"] + 1)})},
-            {"text": "Bandits attack! You fend them off, but lose some supply and health.", "effect": lambda: (setattr(
-                self, "supply", self.supply - 20), random.choice(self.party).update({"health": max(0, random.choice(self.party)["health"] - 1)}))}
-        ]
+        self.ai.random_event()
 
-        event = random.choice(events)
-        print(f"\nEvent: {event['text']}")
-        event['effect']()  # Execute the effect of the event
-        print(self.supply)
+    def update_value(self, supply, health, day):
+        if supply is not None:
+            self.supply += supply
+
+        if health is not None:
+            target = random.choice(self.party)
+            target['health'] = min(5, target['health'] + health)
+
+        if day is not None:
+            self.current_date += datetime.timedelta(days=day)
