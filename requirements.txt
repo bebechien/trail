@@ -1,0 +1,5 @@
+# requriments
+jsonschema
+
+# optional
+google-generativeai # if you use gemini.py
