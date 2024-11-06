@@ -2,6 +2,9 @@ import random
 import datetime
 
 
+__destination_ly__ = 580
+
+
 class IGameAI:
     """Interface Class representing a game AI"""
     app = None
@@ -30,25 +33,27 @@ class GameApp:
             name = input(f"Enter name for person {i+1}: ")
             self.party.append({"name": name, "health": 5})
 
+    def print_travel_progress(self):
+        """Prints travel progress bar"""
+        percent = f"{(100*(self.ly_traveled/float(__destination_ly__))):.1f}"
+        filled_length = int(50 * self.ly_traveled // __destination_ly__)
+        prog_bar = "█" * filled_length + "-" * (50 - filled_length)
+        print(f"Progress: |{prog_bar}| {percent}% Complete")
+
     def display_status(self):
         """Displays the current game status."""
         print("\n--- Current Status ---")
-        print(f"Date: {self.current_date}")
-        print(f"Supply: {self.supply} units")
-        print(f"Light-years Traveled: {self.ly_traveled}")
-        print("\n--- Party Members ---")
+        print(f"Date: {self.current_date} | Supply: {self.supply} units | Light-years Traveled: {self.ly_traveled}")
+        self.print_travel_progress()
+        print("--- Party Members ---")
         for member in self.party:
             print(f"{member['name']}: Health - {member['health']}")
 
     def get_player_choice(self):
         """Gets and validates player input."""
         while True:
-            print("\n--- Choose an action ---")
-            print("1. Travel")
-            print("2. Rest")
-            print("3. Search")
-            print("4. Status")
-            print("5. Quit")
+            print("--- Choose an action ---")
+            print("1. Travel | 2. Rest | 3. Search | 4. Status | 5. Quit")
             try:
                 choice = int(input("Enter your choice (1-5): "))
                 if 1 <= choice <= 5:
@@ -61,7 +66,7 @@ class GameApp:
     def travel(self):
         """Handles the 'travel' action."""
         days_traveled = random.randint(3, 7)
-        lys = random.randint(5, 20)
+        lys = random.randint(10, 40)
         # Consume supply based on party size
         self.supply -= days_traveled * 5 * len(self.party)
         for member in self.party:
@@ -69,7 +74,7 @@ class GameApp:
             member["health"] -= random.randint(0, 1)
         self.ly_traveled += lys
         self.current_date += datetime.timedelta(days=days_traveled)
-        print(f"Traveled {lys} light-years in {days_traveled} days.")
+        print(f"\nTraveled {lys} light-years in {days_traveled} days.")
 
     def rest(self):
         """Handles the 'rest' action."""
@@ -80,7 +85,7 @@ class GameApp:
             # Increase health, but not beyond the maximum
             member["health"] = min(5, member["health"] + 1)
         self.current_date += datetime.timedelta(days=days_rested)
-        print(f"Rested for {days_rested} days.")
+        print(f"\nRested for {days_rested} days.")
 
     def search(self):
         """Handles the 'search' action."""
@@ -91,11 +96,11 @@ class GameApp:
             # Potential individual health decrease
             member["health"] -= random.randint(0, 1)
         self.current_date += datetime.timedelta(days=days_searching)
-        print(f"Searched for {days_searching} days.")
+        print(f"\nSearched for {days_searching} days.")
 
     def check_game_over(self):
         """Checks if game over conditions are met."""
-        if self.ly_traveled >= 580:
+        if self.ly_traveled >= __destination_ly__:
             print("\nCongratulations! You reached the Kepler-186f!")
             return True
         elif self.supply <= 0:
