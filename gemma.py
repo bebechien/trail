@@ -31,29 +31,23 @@ class GameAI(IGameAI):
     def generate_event(self):
         """Generate and validate event."""
         num_of_try = 0
-        prompt = f"{self.__START_TURN_USER__}{const.EVENT_GENERATION_PROMPT}{repr(const.EVENT_JSON_SCHEMA)}\nNo explanation required.{self.__END_TURN__}{self.__START_TURN_MODEL__}"
+        prompt = f"{self.__START_TURN_USER__}{const.EVENT_GENERATION_PROMPT}{const.EVENT_JSON_EXAMPLE_STR}\nNo explanation required.{self.__END_TURN__}{self.__START_TURN_MODEL__}"
         while True:
             response = self.model.generate(prompt, max_length=1024)
-            print(response)
-            event_string = response.replace(prompt, "").removeprefix("```json").split("```")[0]  # Extract only the new response
+            event_string = response.replace(prompt, "").removeprefix("```json").removesuffix("<end_of_turn>").split("```")[0]  # Extract only the new response
             try:
-                raw_event = json.loads(event_string)
-                event = {
-                    "text": f"{raw_event['properties']['text']}",
-                    "effect": raw_event['properties']['effect']
-                }
-                print(event)
+                event = json.loads(event_string)
                 jsonschema.validate(instance=event, schema=const.EVENT_JSON_SCHEMA)
                 return event
 
-            except Exception as e:
+            except (jsonschema.exceptions.ValidationError, json.decoder.JSONDecodeError) as e:
                 print(e)
                 print(event_string)
                 print("-"*80)
                 num_of_try += 1
                 if num_of_try > self.__MAX_NUM_OF_TRY__:
                     print("Too many failure. Use example json instead.")
-                    return const.EVENT_JSON_EXAMPLE
+                    return json.loads(const.EVENT_JSON_EXAMPLE_STR)
                 print(f"Try again ({num_of_try}/{self.__MAX_NUM_OF_TRY__})")
 
     def random_event(self):
