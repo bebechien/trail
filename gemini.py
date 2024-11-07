@@ -21,8 +21,8 @@ class GameAI(IGameAI):
     def generate_event(self):
         """Generate and validate event."""
         while True:
-            event_string = self.model.generate_content(const.EVENT_GENERATION_PROMPT + "\nWrite a random event in json format, follow the schema below. The event may affect supply, a party member's health or time.\n" +
-                                                       repr(const.EVENT_JSON_SCHEMA)).text.removeprefix("```json").split("```")[0]
+            event_string = self.model.generate_content(const.EVENT_GENERATION_PROMPT + repr(
+                const.EVENT_JSON_SCHEMA)).text.removeprefix("```json").split("```")[0]
             try:
                 event = json.loads(event_string)
                 try:
@@ -40,7 +40,6 @@ class GameAI(IGameAI):
                 print("Invalid format. Try again")
 
     def random_event(self):
-        """Triggers a random event."""
         event = self.generate_event()
         print(f"\nEvent: {event['text']}\n `-> Effect: {event['effect']}")
         # Execute the effect of the event
