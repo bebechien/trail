@@ -3,6 +3,7 @@ import random
 from game import GameApp
 #from scripted import GameAI
 #from gemma import GameAI
+#from gemma_ollama import GameAI
 from gemini import GameAI
 
 trail = GameApp()
