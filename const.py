@@ -15,7 +15,7 @@ GAME_DEFAULT_TRAVEL_SPEED = 7
 GAME_UI_PROGRESS_BAR_LENGTH = 50
 
 EVENT_GENERATION_PROMPT = """You are in-game AI for "The Kepler Trail", the game inspired by "The Oregon Trail" but traveling in space.
-Write a random event in json format, follow the schema below. The event may affect supply, a party member's health or time.
+Write a random event in json format, follow the schema below. The event may affect supply, a party member's health or day.
 """
 EVENT_JSON_SCHEMA = {
     "type": "object",
@@ -24,7 +24,7 @@ EVENT_JSON_SCHEMA = {
         "effect": {
             "type": "object",
             "properties": {
-                "supply": {"type": "integer"},
+                "supply": {"type": "integer", "minimum": -50, "maximum": 50},
                 "health": {"type": "integer", "minimum": -2, "maximum": 2},
                 "day": {"type": "integer", "minimum": 0, "maximum": 2},
             }
