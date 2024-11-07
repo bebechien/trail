@@ -73,7 +73,7 @@ class GameApp:
         self.supply -= days_traveled * const.GAME_DEFAULT_CONSUME_TRAVEL * len(self.party)
         for member in self.party:
             # Potential individual health decrease
-            member["health"] -= random.randint(0, 1) * const.GAME_DEFAULT_HEALTH_MAX / 5
+            member["health"] -= random.randint(0, const.GAME_DEFAULT_HEALTH_MAX / 5)
         self.ly_traveled += lys
         self.current_date += datetime.timedelta(days=days_traveled)
         print(f"\nTraveled {lys} light-years in {days_traveled} days.")
