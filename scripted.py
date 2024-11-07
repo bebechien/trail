@@ -1,3 +1,5 @@
+"""This module defines a game AI class with a traditional script-based approach"""
+
 import random
 
 from game import IGameAI

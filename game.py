@@ -1,8 +1,8 @@
+"""This module defines game related classes"""
+
 import random
 import datetime
-
-
-__destination_ly__ = 580
+import const
 
 
 class IGameAI:
@@ -18,9 +18,9 @@ class IGameAI:
 
 class GameApp:
     """Class representing a game application"""
-    supply = 500
+    supply = const.GAME_DEFAULT_SUPPLY
     ly_traveled = 0
-    current_date = datetime.date(2345, 3, 1)  # Start on March 1st, 2345
+    current_date = const.GAME_DEFAULT_START_DATE
     party = []
     ai = None
 
@@ -31,19 +31,21 @@ class GameApp:
         party_size = int(input("How many people are in your party? "))
         for i in range(party_size):
             name = input(f"Enter name for person {i+1}: ")
-            self.party.append({"name": name, "health": 5})
+            self.party.append({"name": name, "health": const.GAME_DEFAULT_HEALTH_MAX})
 
     def print_travel_progress(self):
         """Prints travel progress bar"""
-        percent = f"{(100*(self.ly_traveled/float(__destination_ly__))):.1f}"
-        filled_length = int(50 * self.ly_traveled // __destination_ly__)
-        prog_bar = "█" * filled_length + "-" * (50 - filled_length)
+        percent = f"{(100*(self.ly_traveled/float(const.GAME_DESTINATION_DISTANCE))):.1f}"
+        filled_length = int(const.GAME_UI_PROGRESS_BAR_LENGTH * self.ly_traveled //
+                            const.GAME_DESTINATION_DISTANCE)
+        prog_bar = "█" * filled_length + "-" * (const.GAME_UI_PROGRESS_BAR_LENGTH - filled_length)
         print(f"Progress: |{prog_bar}| {percent}% Complete")
 
     def display_status(self):
         """Displays the current game status."""
         print("\n--- Current Status ---")
-        print(f"Date: {self.current_date} | Supply: {self.supply} units | Light-years Traveled: {self.ly_traveled}")
+        print(
+            f"Date: {self.current_date} | Supply: {self.supply} units | Light-years Traveled: {self.ly_traveled}")
         self.print_travel_progress()
         print("--- Party Members ---")
         for member in self.party:
@@ -66,12 +68,12 @@ class GameApp:
     def travel(self):
         """Handles the 'travel' action."""
         days_traveled = random.randint(3, 7)
-        lys = random.randint(10, 40)
+        lys = random.randint(1, 4) * const.GAME_DEFAULT_TRAVEL_SPEED
         # Consume supply based on party size
-        self.supply -= days_traveled * 5 * len(self.party)
+        self.supply -= days_traveled * const.GAME_DEFAULT_CONSUME_TRAVEL * len(self.party)
         for member in self.party:
             # Potential individual health decrease
-            member["health"] -= random.randint(0, 1)
+            member["health"] -= random.randint(0, 1) * const.GAME_DEFAULT_HEALTH_MAX / 5
         self.ly_traveled += lys
         self.current_date += datetime.timedelta(days=days_traveled)
         print(f"\nTraveled {lys} light-years in {days_traveled} days.")
@@ -80,10 +82,10 @@ class GameApp:
         """Handles the 'rest' action."""
         days_rested = random.randint(2, 5)
         # Consume supply based on party size
-        self.supply -= days_rested * 1 * len(self.party)
+        self.supply -= days_rested * const.GAME_DEFAULT_CONSUME_REST * len(self.party)
         for member in self.party:
             # Increase health, but not beyond the maximum
-            member["health"] = min(5, member["health"] + 1)
+            member["health"] = min(const.GAME_DEFAULT_HEALTH_MAX, member["health"] + 1)
         self.current_date += datetime.timedelta(days=days_rested)
         print(f"\nRested for {days_rested} days.")
 
@@ -91,7 +93,7 @@ class GameApp:
         """Handles the 'search' action."""
         days_searching = random.randint(2, 5)
         # Increase supply supply based on party size
-        self.supply += 100 * len(self.party)
+        self.supply += const.GAME_DEFAULT_SUPPLY_SEARCH * len(self.party)
         for member in self.party:
             # Potential individual health decrease
             member["health"] -= random.randint(0, 1)
@@ -100,7 +102,7 @@ class GameApp:
 
     def check_game_over(self):
         """Checks if game over conditions are met."""
-        if self.ly_traveled >= __destination_ly__:
+        if self.ly_traveled >= const.GAME_DESTINATION_DISTANCE:
             print("\nCongratulations! You reached the Kepler-186f!")
             return True
         elif self.supply <= 0:
@@ -110,7 +112,7 @@ class GameApp:
         elif all(member["health"] <= 0 for member in self.party):
             print("\nGame Over! All party members died.")
             return True
-        elif self.current_date >= datetime.date(2345, 12, 31):
+        elif self.current_date >= const.GAME_DEFAULT_END_DATE:
             print("\nGame Over! You didn't reach the Kepler-186f before year ends.")
             return True
         return False
@@ -135,7 +137,7 @@ class GameApp:
 
         if health is not None:
             target = random.choice(self.party)
-            target['health'] = min(5, target['health'] + health)
+            target['health'] = min(const.GAME_DEFAULT_HEALTH_MAX, target['health'] + health)
 
         if day is not None:
             self.current_date += datetime.timedelta(days=day)
