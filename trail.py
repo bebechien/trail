@@ -1,3 +1,5 @@
+"""This runs the game application."""
+
 import random
 
 from game import GameApp

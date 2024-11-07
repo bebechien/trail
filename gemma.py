@@ -12,6 +12,7 @@ from game import IGameAI
 # Run at half precision to save memory
 keras.config.set_floatx("bfloat16")
 
+
 class GameAI(IGameAI):
     """Class representing a game AI implemented with Gemma"""
     __model_name__ = "gemma2_instruct_2b_en"
@@ -34,10 +35,12 @@ class GameAI(IGameAI):
         prompt = f"{self.__START_TURN_USER__}{const.EVENT_GENERATION_PROMPT}{const.EVENT_JSON_EXAMPLE_STR}\nNo explanation required.{self.__END_TURN__}{self.__START_TURN_MODEL__}"
         while True:
             response = self.model.generate(prompt, max_length=1024)
-            event_string = response.replace(prompt, "").removeprefix("```json").removesuffix("<end_of_turn>").split("```")[0]  # Extract only the new response
+            event_string = response.replace(prompt, "").removeprefix("```json").removesuffix(
+                "<end_of_turn>").split("```")[0]  # Extract only the new response
             try:
                 event = json.loads(event_string)
-                jsonschema.validate(instance=event, schema=const.EVENT_JSON_SCHEMA)
+                jsonschema.validate(
+                    instance=event, schema=const.EVENT_JSON_SCHEMA)
                 return event
 
             except (jsonschema.exceptions.ValidationError, json.decoder.JSONDecodeError) as e:
