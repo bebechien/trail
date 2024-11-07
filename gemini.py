@@ -11,6 +11,8 @@ from game import IGameAI
 
 class GameAI(IGameAI):
     """Class representing a game AI implemented with Gemini"""
+    __MAX_NUM_OF_TRY__ = 3
+
     model = None
 
     def __init__(self, app):
@@ -20,24 +22,25 @@ class GameAI(IGameAI):
 
     def generate_event(self):
         """Generate and validate event."""
+        num_of_try = 0
         while True:
             event_string = self.model.generate_content(const.EVENT_GENERATION_PROMPT + repr(
                 const.EVENT_JSON_SCHEMA)).text.removeprefix("```json").split("```")[0]
             try:
                 event = json.loads(event_string)
-                try:
-                    jsonschema.validate(
-                        instance=event, schema=const.EVENT_JSON_SCHEMA)
-                    return event
-                except jsonschema.exceptions.ValidationError:
-                    print(event_string)
-                    print("-"*80)
-                    print("Invalid format. Try again")
+                jsonschema.validate(
+                    instance=event, schema=const.EVENT_JSON_SCHEMA)
+                return event
 
-            except json.decoder.JSONDecodeError:
+            except Exception as e:
+                print(e)
                 print(event_string)
                 print("-"*80)
-                print("Invalid format. Try again")
+                num_of_try += 1
+                if num_of_try > self.__MAX_NUM_OF_TRY__:
+                    print("Too many failure. Use example json instead.")
+                    return const.EVENT_JSON_EXAMPLE
+                print(f"Try again ({num_of_try}/{self.__MAX_NUM_OF_TRY__})")
 
     def random_event(self):
         event = self.generate_event()
