@@ -31,3 +31,4 @@ EVENT_JSON_SCHEMA = {
         }
     }
 }
+EVENT_JSON_EXAMPLE = {"text": "Lost in space! Spend a day searching.", "effect": {"day": 1}}
