@@ -30,7 +30,7 @@ class GameAI(IGameAI):
             prompt = const.EVENT_GENERATION_PROMPT.format(lang=" in Japanese")
 
         while True:
-            event_string = self.model.generate_content(prompt + repr(
+            event_string = self.model.generate_content(prompt + "\nFollow the schema below.\n" + repr(
                 const.EVENT_JSON_SCHEMA)).text.removeprefix("```json").split("```")[0]
             try:
                 event = json.loads(event_string)
