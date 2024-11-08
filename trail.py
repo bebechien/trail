@@ -1,25 +1,24 @@
 """This runs the game application."""
 
 import os
-import random
 
 from game import GameApp
 
 # default language = English
 # Use "ko" for Korean and "ja" for Japanese
-lang = "en"
+LANG = "en"
 # default GameAI = "gemini"
-ai_target = "gemini"
+AI_TARGET = "gemini"
 
-debug = False
+DEBUG = False
 if "GAME_LANG" in os.environ:
-    lang = os.environ.get("GAME_LANG")
+    LANG = os.environ.get("GAME_LANG")
 if "GAME_DEBUG" in os.environ:
-    debug = bool(os.environ.get("GAME_DEBUG"))
+    DEBUG = bool(os.environ.get("GAME_DEBUG"))
 if "GAME_AI" in os.environ:
-    ai_target = os.environ.get("GAME_AI")
+    AI_TARGET = os.environ.get("GAME_AI")
 
-match ai_target:
+match AI_TARGET:
     case "gemma":
         from gemma import GameAI
 
@@ -36,7 +35,7 @@ trail = GameApp()
 game_ai = GameAI(trail)
 
 # Main game loop
-trail.initialize_game(game_ai, lang, debug)
+trail.initialize_game(game_ai, LANG, DEBUG)
 while True:
     trail.display_status()
     choice = trail.get_player_choice()

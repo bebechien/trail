@@ -25,7 +25,7 @@ class GameAI(IGameAI):
     event_example = const.EVENT_JSON_EXAMPLE_STR
 
     def __init__(self, app):
-        super().__init__(app, __model_name__)
+        super().__init__(app, self.__model_name__)
         self.model = keras_nlp.models.GemmaCausalLM.from_preset(
             self.__model_name__)
         self.model.compile(sampler="top_k")
