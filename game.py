@@ -155,4 +155,5 @@ class GameApp:
             self.current_date += datetime.timedelta(days=day)
 
     def quit(self):
+        """Quit the game"""
         print(self.msg_json['ui']['info_quit'])
