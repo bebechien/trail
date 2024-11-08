@@ -1,0 +1,38 @@
+{
+  "input": {
+    "party_number": "파티 인원은 몇 명입니까? ",
+    "member_name": "{idx}번째 사람의 이름을 입력하세요: ",
+    "choose_action": "선택 사항을 입력하세요 (1-5): "
+  },
+  "ui": {
+    "progress": "진행 상황",
+    "complete": "완료",
+    "status": "현재 상태",
+    "date": "날짜",
+    "supply": "보급품",
+    "supply_unit": "유닛",
+    "traveled": "이동 거리",
+    "traveled_unit": "광년",
+    "party": "파티원",
+    "health": "체력",
+    "choose_action": "행동 선택",
+    "act_travel": "이동",
+    "act_rest": "휴식",
+    "act_search": "탐색",
+    "act_status": "상태",
+    "act_quit": "종료",
+    "info_traveled": "\n{days}일 동안 {lys}광년을 이동했습니다.",
+    "info_event": "\n이벤트: {desc}\n `-> 효과: {effect}",
+    "info_rested": "\n{days}일 동안 휴식을 취했습니다.",
+    "info_searched": "\n{days} 일 동안 탐색하여 {supply} 유닛의 보급품을 획득했습니다.",
+    "info_quit": "\n게임을 종료합니다.\n",
+    "end_reached": "\n축하합니다! 케플러-186f에 도착했습니다!",
+    "end_no_supply": "\n게임 오버! 보급품이 부족합니다.",
+    "end_all_died": "\n게임 오버! 모든 파티원이 사망했습니다.",
+    "end_time_over": "\n게임 오버! 연말까지 케플러-186f에 도착하지 못했습니다."
+  },
+  "err": {
+    "invalid_choice": "잘못된 선택입니다. 1에서 5 사이의 숫자를 입력하세요.",
+    "invalid_input": "잘못된 입력입니다. 숫자를 입력하세요."
+  }
+}

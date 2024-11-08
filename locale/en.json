@@ -1,0 +1,38 @@
+{
+  "input": {
+    "party_number": "How many people are in your party? ",
+    "member_name": "Enter name for person {idx}: ",
+    "choose_action": "Enter your choice (1-5): "
+  },
+  "ui": {
+    "progress": "Progress",
+    "complete": "Complete",
+    "status": "Current Status",
+    "date": "Date",
+    "supply": "Supply",
+    "supply_unit": "units",
+    "traveled": "Traveled",
+    "traveled_unit": "Light-years",
+    "party": "Party Members",
+    "health": "Health",
+    "choose_action": "Choose an action",
+    "act_travel": "Travel",
+    "act_rest": "Rest",
+    "act_search": "Search",
+    "act_status": "Status",
+    "act_quit": "Quit",
+    "info_traveled": "\nTraveled {lys} light-years in {days} days.",
+    "info_event": "\nEvent: {desc}\n `-> Effect: {effect}",
+    "info_rested": "\nRested for {days} days.",
+    "info_searched": "\nSearched for {days} days and earned {supply} units of supply.",
+    "info_quit": "\nQuitting the game.\n",
+    "end_reached": "\nCongratulations! You reached the Kepler-186f!",
+    "end_no_supply": "\nGame Over! You ran out of supply.",
+    "end_all_died": "\nGame Over! All party members died.",
+    "end_time_over": "\nGame Over! You didn't reach the Kepler-186f before year ends."
+  },
+  "err": {
+    "invalid_choice": "Invalid choice. Please enter a number between 1 and 5.",
+    "invalid_input": "Invalid input. Please enter a number."
+  }
+}

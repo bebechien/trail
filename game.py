@@ -2,6 +2,7 @@
 
 import random
 import datetime
+import json
 import const
 
 
@@ -23,97 +24,111 @@ class GameApp:
     current_date = const.GAME_DEFAULT_START_DATE
     party = []
     ai = None
+    lang = "en"
+    msg_json = {}
 
-    def initialize_game(self, ai):
+    def initialize_game(self, ai, lang="en"):
         """Sets initial game values."""
         self.ai = ai
+        self.lang = lang
+        with open(f"locale/{lang}.json", "r", encoding="utf-8") as f:
+            self.msg_json = json.load(f)
 
-        party_size = int(input("How many people are in your party? "))
+        party_size = int(input(self.msg_json['input']['party_number']))
         for i in range(party_size):
-            name = input(f"Enter name for person {i+1}: ")
-            self.party.append({"name": name, "health": const.GAME_DEFAULT_HEALTH_MAX})
+            name = input(self.msg_json['input']['member_name'].format(idx=i+1))
+            self.party.append(
+                {"name": name, "health": const.GAME_DEFAULT_HEALTH_MAX})
 
     def print_travel_progress(self):
         """Prints travel progress bar"""
         percent = f"{(100*(self.ly_traveled/float(const.GAME_DESTINATION_DISTANCE))):.1f}"
         filled_length = int(const.GAME_UI_PROGRESS_BAR_LENGTH * self.ly_traveled //
                             const.GAME_DESTINATION_DISTANCE)
-        prog_bar = "█" * filled_length + "-" * (const.GAME_UI_PROGRESS_BAR_LENGTH - filled_length)
-        print(f"Progress: |{prog_bar}| {percent}% Complete")
+        prog_bar = "█" * filled_length + "-" * \
+            (const.GAME_UI_PROGRESS_BAR_LENGTH - filled_length)
+        print(
+            f"{self.msg_json['ui']['progress']}: |{prog_bar}| {percent}% {self.msg_json['ui']['complete']}")
 
     def display_status(self):
         """Displays the current game status."""
-        print("\n--- Current Status ---")
+        print(f"\n--- {self.msg_json['ui']['status']} ---")
         print(
-            f"Date: {self.current_date} | Supply: {self.supply} units | Light-years Traveled: {self.ly_traveled}")
+            f"{self.msg_json['ui']['date']}: {self.current_date} | {self.msg_json['ui']['supply']}: {self.supply} {self.msg_json['ui']['supply_unit']} | {self.msg_json['ui']['traveled']}: {self.ly_traveled} {self.msg_json['ui']['traveled_unit']}")
         self.print_travel_progress()
-        print("--- Party Members ---")
+        print(f"--- {self.msg_json['ui']['party']} ---")
         for member in self.party:
-            print(f"{member['name']}: Health - {member['health']}")
+            print(
+                f"{member['name']}: {self.msg_json['ui']['health']} - {member['health']}")
 
     def get_player_choice(self):
         """Gets and validates player input."""
         while True:
-            print("--- Choose an action ---")
-            print("1. Travel | 2. Rest | 3. Search | 4. Status | 5. Quit")
+            print(f"--- {self.msg_json['ui']['choose_action']} ---")
+            print(f"1. {self.msg_json['ui']['act_travel']} | 2. {self.msg_json['ui']['act_rest']} | 3. {self.msg_json['ui']['act_search']} | 4. {self.msg_json['ui']['act_status']} | 5. {self.msg_json['ui']['act_quit']}")
             try:
-                choice = int(input("Enter your choice (1-5): "))
+                choice = int(input(f"{self.msg_json['input']['choose_action']}"))
                 if 1 <= choice <= 5:
                     return choice
                 else:
-                    print("Invalid choice. Please enter a number between 1 and 5.")
+                    print(f"{self.msg_json['err']['invalid_choice']}")
             except ValueError:
-                print("Invalid input. Please enter a number.")
+                print(f"{self.msg_json['err']['invalid_input']}")
 
     def travel(self):
         """Handles the 'travel' action."""
         days_traveled = random.randint(3, 7)
         lys = random.randint(1, 4) * const.GAME_DEFAULT_TRAVEL_SPEED
         # Consume supply based on party size
-        self.supply -= days_traveled * const.GAME_DEFAULT_CONSUME_TRAVEL * len(self.party)
+        self.supply -= days_traveled * \
+            const.GAME_DEFAULT_CONSUME_TRAVEL * len(self.party)
         for member in self.party:
             # Potential individual health decrease
-            member["health"] -= random.randint(0, const.GAME_DEFAULT_HEALTH_MAX / 5)
+            member["health"] -= random.randint(0,
+                                               const.GAME_DEFAULT_HEALTH_MAX / 5)
         self.ly_traveled += lys
         self.current_date += datetime.timedelta(days=days_traveled)
-        print(f"\nTraveled {lys} light-years in {days_traveled} days.")
+        print(self.msg_json['ui']['info_traveled'].format(lys=lys, days=days_traveled))
 
     def rest(self):
         """Handles the 'rest' action."""
         days_rested = random.randint(2, 5)
         # Consume supply based on party size
-        self.supply -= days_rested * const.GAME_DEFAULT_CONSUME_REST * len(self.party)
+        self.supply -= days_rested * \
+            const.GAME_DEFAULT_CONSUME_REST * len(self.party)
         for member in self.party:
             # Increase health, but not beyond the maximum
-            member["health"] = min(const.GAME_DEFAULT_HEALTH_MAX, member["health"] + 1)
+            member["health"] = min(
+                const.GAME_DEFAULT_HEALTH_MAX, member["health"] + 1)
         self.current_date += datetime.timedelta(days=days_rested)
-        print(f"\nRested for {days_rested} days.")
+        print(self.msg_json['ui']['info_rested'].format(days=days_rested))
 
     def search(self):
         """Handles the 'search' action."""
         days_searching = random.randint(2, 5)
         # Increase supply supply based on party size
-        self.supply += const.GAME_DEFAULT_SUPPLY_SEARCH * len(self.party)
+        earned_supply = const.GAME_DEFAULT_SUPPLY_SEARCH * len(self.party)
+        self.supply += earned_supply
         for member in self.party:
             # Potential individual health decrease
             member["health"] -= random.randint(0, 1)
         self.current_date += datetime.timedelta(days=days_searching)
-        print(f"\nSearched for {days_searching} days.")
+        print(self.msg_json['ui']['info_searched'].format(days=days_searching, supply=earned_supply))
 
     def check_game_over(self):
         """Checks if game over conditions are met."""
         if self.ly_traveled >= const.GAME_DESTINATION_DISTANCE:
-            print("\nCongratulations! You reached the Kepler-186f!")
+            print(self.msg_json['ui']['end_reached'])
             return True
         elif self.supply <= 0:
-            print("\nGame Over! You ran out of supply.")
+            print(self.msg_json['ui']['end_no_supply'])
             return True
-        # Check if any member has 0 health
+        # Check if all member has 0 health
         elif all(member["health"] <= 0 for member in self.party):
-            print("\nGame Over! All party members died.")
+            print(self.msg_json['ui']['end_all_died'])
             return True
         elif self.current_date >= const.GAME_DEFAULT_END_DATE:
-            print("\nGame Over! You didn't reach the Kepler-186f before year ends.")
+            print(self.msg_json['ui']['end_time_over'])
             return True
         return False
 
@@ -121,10 +136,6 @@ class GameApp:
         """Removes dead members from the party."""
         # Keep only members with health > 0
         self.party = [member for member in self.party if member["health"] > 0]
-        if not self.party:  # If the party is empty
-            print("\nGame Over! All party members died.")
-            return True
-        return False
 
     def random_event(self):
         """Generate a random event"""
@@ -137,7 +148,11 @@ class GameApp:
 
         if health is not None:
             target = random.choice(self.party)
-            target['health'] = min(const.GAME_DEFAULT_HEALTH_MAX, target['health'] + health)
+            target['health'] = min(
+                const.GAME_DEFAULT_HEALTH_MAX, target['health'] + health)
 
         if day is not None:
             self.current_date += datetime.timedelta(days=day)
+
+    def quit(self):
+        print(self.msg_json['ui']['info_quit'])

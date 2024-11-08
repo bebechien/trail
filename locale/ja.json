@@ -1,0 +1,38 @@
+{
+  "input": {
+    "party_number": "パーティーは何人ですか？ ",
+    "member_name": "{idx}番目の人の名前を入力してください： ",
+    "choose_action": "選択肢を入力してください（1〜5）： "
+  },
+  "ui": {
+    "progress": "進捗",
+    "complete": "完了",
+    "status": "現在の状態",
+    "date": "日付",
+    "supply": "物資",
+    "supply_unit": "ユニット",
+    "traveled": "移動距離",
+    "traveled_unit": "光年",
+    "party": "パーティーメンバー",
+    "health": "体力",
+    "choose_action": "行動を選択",
+    "act_travel": "移動",
+    "act_rest": "休息",
+    "act_search": "探索",
+    "act_status": "ステータス",
+    "act_quit": "終了",
+    "info_traveled": "\n{days}日で{lys}光年移動しました。",
+    "info_event": "\nイベント：{desc}\n `-> 効果：{effect}",
+    "info_rested": "\n{days}日間休息しました。",
+    "info_searched": "\n{days}日間探索し、{supply}ユニットの物資を獲得しました。",
+    "info_quit": "\nゲームを終了します。\n",
+    "end_reached": "\nおめでとうございます！ケプラー186fに到着しました！",
+    "end_no_supply": "\nゲームオーバー！物資がなくなりました。",
+    "end_all_died": "\nゲームオーバー！パーティーメンバー全員が死亡しました。",
+    "end_time_over": "\nゲームオーバー！年末までにケプラー186fに到着できませんでした。"
+  },
+  "err": {
+    "invalid_choice": "無効な選択肢です。1から5までの数字を入力してください。",
+    "invalid_input": "無効な入力です。数字を入力してください。"
+  }
+}

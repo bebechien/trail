@@ -23,8 +23,14 @@ class GameAI(IGameAI):
     def generate_event(self):
         """Generate and validate event."""
         num_of_try = 0
+        prompt = const.EVENT_GENERATION_PROMPT.format(lang="")
+        if self.app.lang == "ko":
+            prompt = const.EVENT_GENERATION_PROMPT.format(lang=" in Korean")
+        elif self.app.lang == "ja":
+            prompt = const.EVENT_GENERATION_PROMPT.format(lang=" in Japanese")
+
         while True:
-            event_string = self.model.generate_content(const.EVENT_GENERATION_PROMPT + repr(
+            event_string = self.model.generate_content(prompt + repr(
                 const.EVENT_JSON_SCHEMA)).text.removeprefix("```json").split("```")[0]
             try:
                 event = json.loads(event_string)
@@ -44,7 +50,7 @@ class GameAI(IGameAI):
 
     def random_event(self):
         event = self.generate_event()
-        print(f"\nEvent: {event['text']}\n `-> Effect: {event['effect']}")
+        print(self.app.msg_json['ui']['info_event'].format(desc=event['text'], effect=event['effect']))
         # Execute the effect of the event
         effect = event['effect']
         self.app.update_value(effect.get('supply', None), effect.get(
