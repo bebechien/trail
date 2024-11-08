@@ -8,6 +8,9 @@ from game import IGameAI
 class GameAI(IGameAI):
     """Class representing a game AI that uses a traditional script-based approach"""
 
+    def __init__(self, app):
+        super().__init__(app, "Traditional Script")
+
     def random_event(self):
         """Triggers a random event."""
         events = [
@@ -23,7 +26,7 @@ class GameAI(IGameAI):
         ]
 
         event = random.choice(events)
-        print(f"\nEvent: {event['text']}")
+        print(self.app.msg_json['ui']['info_event'].format(desc=event['text'], effect=event['effect']))
         # Execute the effect of the event
         effect = event['effect']
         self.app.update_value(effect.get('supply', None), effect.get(
