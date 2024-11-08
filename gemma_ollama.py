@@ -50,7 +50,7 @@ class GameAI(IGameAI):
 
     def random_event(self):
         event = self.generate_event()
-        print(f"\nEvent: {event['text']}\n `-> Effect: {event['effect']}")
+        print(self.app.msg_json['ui']['info_event'].format(desc=event['text'], effect=event['effect']))
         # Execute the effect of the event
         effect = event['effect']
         self.app.update_value(effect.get('supply', None), effect.get(
