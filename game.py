@@ -25,12 +25,14 @@ class GameApp:
     party = []
     ai = None
     lang = "en"
+    debug = False
     msg_json = {}
 
-    def initialize_game(self, ai, lang="en"):
+    def initialize_game(self, ai, lang="en", debug=False):
         """Sets initial game values."""
         self.ai = ai
         self.lang = lang
+        self.debug = debug
         with open(f"locale/{lang}.json", "r", encoding="utf-8") as f:
             self.msg_json = json.load(f)
 
@@ -67,7 +69,8 @@ class GameApp:
             print(f"--- {self.msg_json['ui']['choose_action']} ---")
             print(f"1. {self.msg_json['ui']['act_travel']} | 2. {self.msg_json['ui']['act_rest']} | 3. {self.msg_json['ui']['act_search']} | 4. {self.msg_json['ui']['act_status']} | 5. {self.msg_json['ui']['act_quit']}")
             try:
-                choice = int(input(f"{self.msg_json['input']['choose_action']}"))
+                choice = int(
+                    input(f"{self.msg_json['input']['choose_action']}"))
                 if 1 <= choice <= 5:
                     return choice
                 else:
@@ -88,7 +91,8 @@ class GameApp:
                                                const.GAME_DEFAULT_HEALTH_MAX / 5)
         self.ly_traveled += lys
         self.current_date += datetime.timedelta(days=days_traveled)
-        print(self.msg_json['ui']['info_traveled'].format(lys=lys, days=days_traveled))
+        print(self.msg_json['ui']['info_traveled'].format(
+            lys=lys, days=days_traveled))
 
     def rest(self):
         """Handles the 'rest' action."""
@@ -113,7 +117,8 @@ class GameApp:
             # Potential individual health decrease
             member["health"] -= random.randint(0, 1)
         self.current_date += datetime.timedelta(days=days_searching)
-        print(self.msg_json['ui']['info_searched'].format(days=days_searching, supply=earned_supply))
+        print(self.msg_json['ui']['info_searched'].format(
+            days=days_searching, supply=earned_supply))
 
     def check_game_over(self):
         """Checks if game over conditions are met."""
@@ -139,7 +144,13 @@ class GameApp:
 
     def random_event(self):
         """Generate a random event"""
-        self.ai.random_event()
+        # 100% chance of a random event if debug mode
+        if self.debug:
+            self.ai.random_event()
+
+        # 30% chance of a random event
+        if random.random() < const.GAME_DEFAULT_RANDOM_EVENT:
+            self.ai.random_event()
 
     def update_value(self, supply, health, day):
         """Update class values"""

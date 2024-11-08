@@ -1,5 +1,6 @@
 """This runs the game application."""
 
+import os
 import random
 
 from game import GameApp
@@ -8,18 +9,26 @@ from game import GameApp
 #from gemma_ollama import GameAI
 from gemini import GameAI
 
+# default language = English
+# Use "ko" for Korean and "ja" for Japanese
+lang = "en"
+debug = False
+if "GAME_LANG" in os.environ:
+    lang = os.environ.get("GAME_LANG")
+if "GAME_DEBUG" in os.environ:
+    debug = bool(os.environ.get("GAME_DEBUG"))
+
 trail = GameApp()
 game_ai = GameAI(trail)
 
 # Main game loop
-trail.initialize_game(game_ai, "ko")
+trail.initialize_game(game_ai, lang, debug)
 while True:
     trail.display_status()
     choice = trail.get_player_choice()
     if choice == 1:
         trail.travel()
-        if random.random() < 0.3:  # 30% chance of a random event after traveling
-            trail.random_event()
+        trail.random_event()
     elif choice == 2:
         trail.rest()
     elif choice == 3:
