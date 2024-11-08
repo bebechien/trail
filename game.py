@@ -157,6 +157,7 @@ class GameApp:
         # 100% chance of a random event if debug mode
         if self.debug:
             self.ai.random_event()
+            return
 
         # 30% chance of a random event
         if random.random() < const.GAME_DEFAULT_RANDOM_EVENT:
