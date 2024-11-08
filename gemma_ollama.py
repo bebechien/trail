@@ -20,11 +20,17 @@ class GameAI(IGameAI):
     def generate_event(self):
         """Generate and validate event."""
         num_of_try = 0
-        prompt = f"{self.__START_TURN_USER__}{const.EVENT_GENERATION_PROMPT}{const.EVENT_JSON_EXAMPLE_STR}\nNo explanation required.{self.__END_TURN__}{self.__START_TURN_MODEL__}"
+        prompt = const.EVENT_GENERATION_PROMPT.format(lang="")
+        if self.app.lang == "ko":
+            prompt = const.EVENT_GENERATION_PROMPT.format(lang=" in Korean")
+        elif self.app.lang == "ja":
+            prompt = const.EVENT_GENERATION_PROMPT.format(lang=" in Japanese")
+
+        chat_prompt = f"{self.__START_TURN_USER__}{prompt}{const.EVENT_JSON_EXAMPLE_STR}\nNo explanation required.{self.__END_TURN__}{self.__START_TURN_MODEL__}"
         while True:
             response = os.popen(
-                f"ollama run {self.__model_name__} \"{prompt}\" > {self.__temp_filename__};cat {self.__temp_filename__}").read()
-            event_string = response.replace(prompt, "").removeprefix("```json").removesuffix(
+                f"ollama run {self.__model_name__} \"{chat_prompt}\" > {self.__temp_filename__};cat {self.__temp_filename__}").read()
+            event_string = response.replace(chat_prompt, "").removeprefix("```json").removesuffix(
                 "<end_of_turn>").split("```")[0]  # Extract only the new response
             try:
                 event = json.loads(event_string)
