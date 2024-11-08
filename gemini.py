@@ -11,14 +11,15 @@ from game import IGameAI
 
 class GameAI(IGameAI):
     """Class representing a game AI implemented with Gemini"""
+    __model_name__ = "gemini-1.5-flash"
     __MAX_NUM_OF_TRY__ = 3
 
     model = None
 
     def __init__(self, app):
-        super().__init__(app)
+        super().__init__(app, self.__model_name__)
         genai.configure(api_key=os.environ["GEMINI_API_KEY"])
-        self.model = genai.GenerativeModel('gemini-1.5-flash')
+        self.model = genai.GenerativeModel(self.__model_name__)
 
     def generate_event(self):
         """Generate and validate event."""
@@ -30,15 +31,16 @@ class GameAI(IGameAI):
             prompt = const.EVENT_GENERATION_PROMPT.format(lang=" in Japanese")
 
         while True:
-            event_string = self.model.generate_content(prompt + "\nFollow the schema below.\n" + repr(
-                const.EVENT_JSON_SCHEMA)).text.removeprefix("```json").split("```")[0]
             try:
+                event_string = self.model.generate_content(prompt + "\nFollow the schema below.\n" + repr(
+                    const.EVENT_JSON_SCHEMA)).text.removeprefix("```json").split("```")[0]
+                print(event_string)
                 event = json.loads(event_string)
                 jsonschema.validate(
                     instance=event, schema=const.EVENT_JSON_SCHEMA)
                 return event
 
-            except (jsonschema.exceptions.ValidationError, json.decoder.JSONDecodeError) as e:
+            except (KeyError, jsonschema.exceptions.ValidationError, json.decoder.JSONDecodeError) as e:
                 print(e)
                 print(event_string)
                 print("-"*80)
@@ -50,7 +52,8 @@ class GameAI(IGameAI):
 
     def random_event(self):
         event = self.generate_event()
-        print(self.app.msg_json['ui']['info_event'].format(desc=event['text'], effect=event['effect']))
+        print(self.app.msg_json['ui']['info_event'].format(
+            desc=event['text'], effect=event['effect']))
         # Execute the effect of the event
         effect = event['effect']
         self.app.update_value(effect.get('supply', None), effect.get(

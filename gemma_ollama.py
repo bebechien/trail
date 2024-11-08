@@ -19,6 +19,9 @@ class GameAI(IGameAI):
 
     event_example = const.EVENT_JSON_EXAMPLE_STR
 
+    def __init__(self, app):
+        super().__init__(app, f"{__model_name__} with Ollama")
+
     def generate_event(self):
         """Generate and validate event."""
         num_of_try = 0

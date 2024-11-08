@@ -4,19 +4,33 @@ import os
 import random
 
 from game import GameApp
-#from scripted import GameAI
-#from gemma import GameAI
-#from gemma_ollama import GameAI
-from gemini import GameAI
 
 # default language = English
 # Use "ko" for Korean and "ja" for Japanese
 lang = "en"
+# default GameAI = "gemini"
+ai_target = "gemini"
+
 debug = False
 if "GAME_LANG" in os.environ:
     lang = os.environ.get("GAME_LANG")
 if "GAME_DEBUG" in os.environ:
     debug = bool(os.environ.get("GAME_DEBUG"))
+if "GAME_AI" in os.environ:
+    ai_target = os.environ.get("GAME_AI")
+
+match ai_target:
+    case "gemma":
+        from gemma import GameAI
+
+    case "gemma_ollama":
+        from gemma_ollama import GameAI
+
+    case "gemini":
+        from gemini import GameAI
+
+    case _:
+        from scripted import GameAI
 
 trail = GameApp()
 game_ai = GameAI(trail)

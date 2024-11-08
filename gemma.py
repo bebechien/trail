@@ -25,7 +25,7 @@ class GameAI(IGameAI):
     event_example = const.EVENT_JSON_EXAMPLE_STR
 
     def __init__(self, app):
-        super().__init__(app)
+        super().__init__(app, __model_name__)
         self.model = keras_nlp.models.GemmaCausalLM.from_preset(
             self.__model_name__)
         self.model.compile(sampler="top_k")
@@ -62,7 +62,7 @@ class GameAI(IGameAI):
                     instance=event, schema=const.EVENT_JSON_SCHEMA)
                 return event
 
-            except (jsonschema.exceptions.ValidationError, json.decoder.JSONDecodeError) as e:
+            except (KeyError, jsonschema.exceptions.ValidationError, json.decoder.JSONDecodeError) as e:
                 print(e)
                 print(event_string)
                 print("-"*80)

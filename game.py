@@ -9,9 +9,14 @@ import const
 class IGameAI:
     """Interface Class representing a game AI"""
     app = None
+    name = "IGameAI"
 
-    def __init__(self, app):
+    def __init__(self, app, name):
         self.app = app
+        self.name = name
+
+    def getName(self):
+        return self.name
 
     def random_event(self):
         """Function generating a random event"""
@@ -33,6 +38,11 @@ class GameApp:
         self.ai = ai
         self.lang = lang
         self.debug = debug
+        if debug:
+            print("<Game runs in DEBUG mode>")
+            print(f"language: {lang}")
+            print(f"ai module: {ai.getName()}")
+
         with open(f"locale/{lang}.json", "r", encoding="utf-8") as f:
             self.msg_json = json.load(f)
 
