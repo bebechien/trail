@@ -32,4 +32,4 @@ EVENT_JSON_SCHEMA = {
         }
     }
 }
-EVENT_JSON_EXAMPLE_STR = """{"text": "Lost in space! Spend a day searching.", "effect": {"supply": 0, "health": 0, "day": 1}}"""
+EVENT_JSON_EXAMPLE_STR = """{"text": "Signal disruption! You spend a day to fix the equipment.", "effect": {"supply": -10, "health": 0, "day": 1}}"""
