@@ -32,9 +32,8 @@ class GameAI(IGameAI):
 
         while True:
             try:
-                event_string = self.model.generate_content(prompt + "\nFollow the schema below.\n" + repr(
+                event_string = self.model.generate_content(prompt + " Follow the schema below.\n" + repr(
                     const.EVENT_JSON_SCHEMA)).text.removeprefix("```json").split("```")[0]
-                print(event_string)
                 event = json.loads(event_string)
                 jsonschema.validate(
                     instance=event, schema=const.EVENT_JSON_SCHEMA)
