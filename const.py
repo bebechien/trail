@@ -33,3 +33,5 @@ EVENT_JSON_SCHEMA = {
     }
 }
 EVENT_JSON_EXAMPLE_STR = """{"text": "Signal disruption! You spend a day to fix the equipment.", "effect": {"supply": -10, "health": 0, "day": 1}}"""
+EVENT_JSON_EXAMPLE_STR_KO = """{"text": "신호 장애 발생! 장비를 수리하는 데 하루를 소모합니다.", "effect": {"supply": -10, "health": 0, "day": 1}}"""
+EVENT_JSON_EXAMPLE_STR_JA = """{"text": "信号が途絶！ 機器の修理に1日を費やします。", "effect": {"supply": -10, "health": 0, "day": 1}}"""
