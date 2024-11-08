@@ -22,6 +22,7 @@ class GameAI(IGameAI):
     __MAX_NUM_OF_TRY__ = 3
 
     model = None
+    event_example = const.EVENT_JSON_EXAMPLE_STR
 
     def __init__(self, app):
         super().__init__(app)
@@ -32,13 +33,31 @@ class GameAI(IGameAI):
     def generate_event(self):
         """Generate and validate event."""
         num_of_try = 0
-        prompt = f"{self.__START_TURN_USER__}{const.EVENT_GENERATION_PROMPT}{const.EVENT_JSON_EXAMPLE_STR}\nNo explanation required.{self.__END_TURN__}{self.__START_TURN_MODEL__}"
+        prompt = const.EVENT_GENERATION_PROMPT.format(lang="")
+        prompt = const.EVENT_GENERATION_PROMPT.format(lang="")
+        if self.app.lang == "ko":
+            prompt = const.EVENT_GENERATION_PROMPT.format(lang=" in Korean")
+            self.event_example = const.EVENT_JSON_EXAMPLE_STR_KO
+        elif self.app.lang == "ja":
+            prompt = const.EVENT_GENERATION_PROMPT.format(lang=" in Japanese")
+            self.event_example = const.EVENT_JSON_EXAMPLE_STR_JA
+
+        chat_prompt = f"{self.__START_TURN_USER__}{prompt}\nBelow is an example.\n{self.event_example}\nNo explanation required.{self.__END_TURN__}{self.__START_TURN_MODEL__}"
         while True:
-            response = self.model.generate(prompt, max_length=1024)
-            event_string = response.replace(prompt, "").removeprefix("```json").removesuffix(
+            response = self.model.generate(chat_prompt, max_length=1024)
+            event_string = response.replace(chat_prompt, "").removeprefix("```json").removesuffix(
                 "<end_of_turn>").split("```")[0]  # Extract only the new response
             try:
                 event = json.loads(event_string)
+
+                # fix common issues
+                if "supply" in event['effect']:
+                    event['effect']['supply'] = int(event['effect']['supply'])
+                if "health" in event['effect']:
+                    event['effect']['health'] = int(event['effect']['health'])
+                if "day" in event['effect']:
+                    event['effect']['day'] = int(event['effect']['day'])
+
                 jsonschema.validate(
                     instance=event, schema=const.EVENT_JSON_SCHEMA)
                 return event
@@ -55,7 +74,7 @@ class GameAI(IGameAI):
 
     def random_event(self):
         event = self.generate_event()
-        print(f"\nEvent: {event['text']}\n `-> Effect: {event['effect']}")
+        print(self.app.msg_json['ui']['info_event'].format(desc=event['text'], effect=event['effect']))
         # Execute the effect of the event
         effect = event['effect']
         self.app.update_value(effect.get('supply', None), effect.get(
