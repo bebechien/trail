@@ -14,7 +14,8 @@ DEBUG = False
 if "GAME_LANG" in os.environ:
     LANG = os.environ.get("GAME_LANG")
 if "GAME_DEBUG" in os.environ:
-    DEBUG = bool(os.environ.get("GAME_DEBUG"))
+    if os.environ.get("GAME_DEBUG") == "True":
+        DEBUG = True
 if "GAME_AI" in os.environ:
     AI_TARGET = os.environ.get("GAME_AI")
 
