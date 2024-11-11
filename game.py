@@ -98,7 +98,7 @@ class GameApp:
         for member in self.party:
             # Potential individual health decrease
             member["health"] -= random.randint(0,
-                                               const.GAME_DEFAULT_HEALTH_MAX / 5)
+                                               const.GAME_DEFAULT_HEALTH_MAX // 5)
         self.ly_traveled += lys
         self.current_date += datetime.timedelta(days=days_traveled)
         print(self.msg_json['ui']['info_traveled'].format(
