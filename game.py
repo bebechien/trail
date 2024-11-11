@@ -1,12 +1,13 @@
 """This module defines game related classes"""
 
+import abc
 import random
 import datetime
 import json
 import const
 
 
-class IGameAI:
+class IGameAI(metaclass=abc.ABCMeta):
     """Interface Class representing a game AI"""
     app = None
     name = "IGameAI"
@@ -18,12 +19,14 @@ class IGameAI:
     def getName(self):
         return self.name
 
+    @abc.abstractmethod
     def random_event(self):
         """Function generating a random event"""
+        raise NotImplementedError
 
 
-class GameApp:
-    """Class representing a game application"""
+class IGameUI(metaclass=abc.ABCMeta):
+    """Interface Class representing a game UI"""
     supply = const.GAME_DEFAULT_SUPPLY
     ly_traveled = 0
     current_date = const.GAME_DEFAULT_START_DATE
@@ -33,60 +36,19 @@ class GameApp:
     debug = False
     msg_json = {}
 
-    def initialize_game(self, ai, lang="en", debug=False):
+    def __init__(self, lang="en", debug=False):
         """Sets initial game values."""
-        self.ai = ai
         self.lang = lang
         self.debug = debug
-        if debug:
-            print("<Game runs in DEBUG mode>")
-            print(f"language: {lang}")
-            print(f"ai module: {ai.getName()}")
 
         with open(f"locale/{lang}.json", "r", encoding="utf-8") as f:
             self.msg_json = json.load(f)
 
-        party_size = int(input(self.msg_json['input']['party_number']))
-        for i in range(party_size):
-            name = input(self.msg_json['input']['member_name'].format(idx=i+1))
-            self.party.append(
-                {"name": name, "health": const.GAME_DEFAULT_HEALTH_MAX})
-
-    def print_travel_progress(self):
-        """Prints travel progress bar"""
-        percent = f"{(100*(self.ly_traveled/float(const.GAME_DESTINATION_DISTANCE))):.1f}"
-        filled_length = int(const.GAME_UI_PROGRESS_BAR_LENGTH * self.ly_traveled //
-                            const.GAME_DESTINATION_DISTANCE)
-        prog_bar = "█" * filled_length + "-" * \
-            (const.GAME_UI_PROGRESS_BAR_LENGTH - filled_length)
-        print(
-            f"{self.msg_json['ui']['progress']}: |{prog_bar}| {percent}% {self.msg_json['ui']['complete']}")
-
-    def display_status(self):
-        """Displays the current game status."""
-        print(f"\n--- {self.msg_json['ui']['status']} ---")
-        print(
-            f"{self.msg_json['ui']['date']}: {self.current_date} | {self.msg_json['ui']['supply']}: {self.supply} {self.msg_json['ui']['supply_unit']} | {self.msg_json['ui']['traveled']}: {self.ly_traveled} {self.msg_json['ui']['traveled_unit']}")
-        self.print_travel_progress()
-        print(f"--- {self.msg_json['ui']['party']} ---")
-        for member in self.party:
-            print(
-                f"{member['name']}: {self.msg_json['ui']['health']} - {member['health']}")
-
-    def get_player_choice(self):
-        """Gets and validates player input."""
-        while True:
-            print(f"--- {self.msg_json['ui']['choose_action']} ---")
-            print(f"1. {self.msg_json['ui']['act_travel']} | 2. {self.msg_json['ui']['act_rest']} | 3. {self.msg_json['ui']['act_search']} | 4. {self.msg_json['ui']['act_status']} | 5. {self.msg_json['ui']['act_quit']}")
-            try:
-                choice = int(
-                    input(f"{self.msg_json['input']['choose_action']}"))
-                if 1 <= choice <= 5:
-                    return choice
-                else:
-                    print(f"{self.msg_json['err']['invalid_choice']}")
-            except ValueError:
-                print(f"{self.msg_json['err']['invalid_input']}")
+    def set_game_ai(self, ai):
+        """Sets a game AI module"""
+        self.ai = ai
+        if self.debug:
+            self.display_debug_info()
 
     def travel(self):
         """Handles the 'travel' action."""
@@ -101,8 +63,7 @@ class GameApp:
                                                const.GAME_DEFAULT_HEALTH_MAX // 5)
         self.ly_traveled += lys
         self.current_date += datetime.timedelta(days=days_traveled)
-        print(self.msg_json['ui']['info_traveled'].format(
-            lys=lys, days=days_traveled))
+        self.display_travel_result(lys, days_traveled)
 
     def rest(self):
         """Handles the 'rest' action."""
@@ -115,7 +76,7 @@ class GameApp:
             member["health"] = min(
                 const.GAME_DEFAULT_HEALTH_MAX, member["health"] + 1)
         self.current_date += datetime.timedelta(days=days_rested)
-        print(self.msg_json['ui']['info_rested'].format(days=days_rested))
+        self.display_rest_result(days_rested)
 
     def search(self):
         """Handles the 'search' action."""
@@ -127,25 +88,7 @@ class GameApp:
             # Potential individual health decrease
             member["health"] -= random.randint(0, 1)
         self.current_date += datetime.timedelta(days=days_searching)
-        print(self.msg_json['ui']['info_searched'].format(
-            days=days_searching, supply=earned_supply))
-
-    def check_game_over(self):
-        """Checks if game over conditions are met."""
-        if self.ly_traveled >= const.GAME_DESTINATION_DISTANCE:
-            print(self.msg_json['ui']['end_reached'])
-            return True
-        elif self.supply <= 0:
-            print(self.msg_json['ui']['end_no_supply'])
-            return True
-        # Check if all member has 0 health
-        elif all(member["health"] <= 0 for member in self.party):
-            print(self.msg_json['ui']['end_all_died'])
-            return True
-        elif self.current_date >= const.GAME_DEFAULT_END_DATE:
-            print(self.msg_json['ui']['end_time_over'])
-            return True
-        return False
+        self.display_search_result(days_searching, earned_supply)
 
     def remove_dead_members(self):
         """Removes dead members from the party."""
@@ -176,6 +119,47 @@ class GameApp:
         if day is not None:
             self.current_date += datetime.timedelta(days=day)
 
+    @abc.abstractmethod
+    def display_debug_info(self):
+        """Prints debug information"""
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def display_status(self):
+        """Displays the current game status."""
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def display_travel_result(self, lys, days):
+        """Display travel result."""
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def display_rest_result(self, days):
+        """Display rest result."""
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def display_search_result(self, days, supply):
+        """Display search result."""
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def get_party_members(self):
+        """Gets the number of party member and names."""
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def get_player_choice(self):
+        """Gets and validates player input."""
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def check_game_over(self):
+        """Checks if game over conditions are met."""
+        raise NotImplementedError
+
+    @abc.abstractmethod
     def quit(self):
         """Quit the game"""
-        print(self.msg_json['ui']['info_quit'])
+        raise NotImplementedError

@@ -2,13 +2,13 @@
 
 import os
 
-from game import GameApp
-
 # default language = English
 # Use "ko" for Korean and "ja" for Japanese
 LANG = "en"
 # default GameAI = "gemini"
 AI_TARGET = "gemini"
+# default GameUI = "terminal"
+GAME_UI = "terminal"
 
 DEBUG = False
 if "GAME_LANG" in os.environ:
@@ -17,6 +17,8 @@ if "GAME_DEBUG" in os.environ:
     DEBUG = bool(os.environ.get("GAME_DEBUG"))
 if "GAME_AI" in os.environ:
     AI_TARGET = os.environ.get("GAME_AI")
+if "GAME_UI" in os.environ:
+    GAME_UI = os.environ.get("GAME_UI")
 
 match AI_TARGET:
     case "gemma":
@@ -31,11 +33,22 @@ match AI_TARGET:
     case _:
         from scripted import GameAI
 
-trail = GameApp()
+match GAME_UI:
+    case "gradio":
+        from game_gradio import GameUI
+
+    case "flask":
+        from game_flask import GameUI
+
+    case _:
+        from game_tty import GameUI
+
+trail = GameUI(LANG, DEBUG)
 game_ai = GameAI(trail)
+trail.set_game_ai(game_ai)
 
 # Main game loop
-trail.initialize_game(game_ai, LANG, DEBUG)
+trail.get_party_members()
 while True:
     trail.display_status()
     choice = trail.get_player_choice()
