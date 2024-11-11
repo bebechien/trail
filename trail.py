@@ -14,7 +14,8 @@ DEBUG = False
 if "GAME_LANG" in os.environ:
     LANG = os.environ.get("GAME_LANG")
 if "GAME_DEBUG" in os.environ:
-    DEBUG = bool(os.environ.get("GAME_DEBUG"))
+    if os.environ.get("GAME_DEBUG") == "True":
+        DEBUG = True
 if "GAME_AI" in os.environ:
     AI_TARGET = os.environ.get("GAME_AI")
 if "GAME_UI" in os.environ:
@@ -40,6 +41,9 @@ match GAME_UI:
     case "flask":
         from game_flask import GameUI
 
+    case "gui":
+        from game_gui import GameUI
+
     case _:
         from game_tty import GameUI
 
@@ -48,23 +52,4 @@ game_ai = GameAI(trail)
 trail.set_game_ai(game_ai)
 
 # Main game loop
-trail.get_party_members()
-while True:
-    trail.display_status()
-    choice = trail.get_player_choice()
-    if choice == 1:
-        trail.travel()
-        trail.random_event()
-    elif choice == 2:
-        trail.rest()
-    elif choice == 3:
-        trail.search()
-    elif choice == 4:
-        pass  # Already displayed status at the beginning of the loop
-    elif choice == 5:
-        trail.quit()
-        break
-
-    trail.remove_dead_members()  # Remove dead members after traveling
-    if trail.check_game_over():
-        break
+trail.main_loop()

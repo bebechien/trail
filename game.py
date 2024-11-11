@@ -163,3 +163,8 @@ class IGameUI(metaclass=abc.ABCMeta):
     def quit(self):
         """Quit the game"""
         raise NotImplementedError
+    
+    @abc.abstractmethod
+    def main_loop(self):
+        """Main game loop"""
+        raise NotImplementedError

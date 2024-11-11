@@ -83,3 +83,25 @@ class GameUI(IGameUI):
 
     def quit(self):
         print(self.msg_json['ui']['info_quit'])
+
+    def main_loop(self):
+        self.get_party_members()
+        while True:
+            self.display_status()
+            choice = self.get_player_choice()
+            if choice == 1:
+                self.travel()
+                self.random_event()
+            elif choice == 2:
+                self.rest()
+            elif choice == 3:
+                self.search()
+            elif choice == 4:
+                pass  # Already displayed status at the beginning of the loop
+            elif choice == 5:
+                self.quit()
+                break
+            
+            self.remove_dead_members()  # Remove dead members after traveling
+            if self.check_game_over():
+                break
