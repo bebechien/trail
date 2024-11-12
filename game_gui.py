@@ -11,6 +11,9 @@ from game import IGameUI
 class GameUI(IGameUI):
     """Class representing a game UI implemented with Pygame"""
     __GAME_TITLE__ = "The Kepler Trail"
+    __GAME_WIDTH__ = 1280
+    __GAME_HEIGHT__ = 720
+    __COLOR_WHITE__ = (255,255,255)
     pygame_ = None
     debug_info = None
     is_running = False
@@ -21,20 +24,21 @@ class GameUI(IGameUI):
         pygame.font.init()
         self.font = pygame.font.SysFont("", 24)
         pygame.display.set_caption(self.__GAME_TITLE__)
-        self.window_surface = pygame.display.set_mode((1280, 720))
-        self.background = pygame.Surface((800, 600))
+        self.window_surface = pygame.display.set_mode((self.__GAME_WIDTH__, self.__GAME_HEIGHT__))
+        self.background = pygame.Surface((self.__GAME_WIDTH__, self.__GAME_HEIGHT__))
         self.background.fill(pygame.Color('#000000'))
-        self.manager = pygame_gui.UIManager((800, 600))
-        self.hello_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((350, 275), (100, 50)),
-                                                         text='Say Hello',
-                                                         manager=self.manager)
+        self.manager = pygame_gui.UIManager((self.__GAME_WIDTH__, self.__GAME_HEIGHT__))
         self.clock = pygame.time.Clock()
+
+        self.title_img = pygame.transform.scale(pygame.image.load("static/title.jpg"), (self.__GAME_WIDTH__, self.__GAME_HEIGHT__))
+        self.title_txt = pygame.font.SysFont("", 64).render(self.__GAME_TITLE__, True, self.__COLOR_WHITE__)
+
         self.is_running = True
 
     def display_debug_info(self):
         self.debug_info = self.font.render(
             f"<Game runs in DEBUG mode>\nlanguage: {self.lang}\nai module: {self.ai.getName()}",
-            True, (255, 255, 255)
+            True, self.__COLOR_WHITE__
         )
         
     def display_status(self):
@@ -69,15 +73,15 @@ class GameUI(IGameUI):
                 if event.type == pygame.QUIT:
                     self.is_running = False
 
-                if event.type == pygame_gui.UI_BUTTON_PRESSED:
-                    if event.ui_element == self.hello_button:
-                        print('Hello World!')
-
             self.manager.process_events(event)
 
             self.manager.update(time_delta)
 
             self.window_surface.blit(self.background, (0, 0))
+
+            self.window_surface.blit(self.title_img, (0, 0))
+            self.window_surface.blit(self.title_txt, (40, 100))
+
             if (self.debug_info):
                 self.window_surface.blit(self.debug_info, (20, 20))
 
