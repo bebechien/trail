@@ -5,3 +5,4 @@ keras-nlp
 # optional
 google-generativeai # if you use gemini.py
 flask # if you use webui
+#pygame_gui # if you use gui

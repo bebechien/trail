@@ -7,20 +7,19 @@ import const
 
 from game import IGameUI
 
-flask_app = Flask(__name__, template_folder='flask')
 
 class GameUI(IGameUI):
     """Class representing a game UI implemented with Flask"""
     __GAME_TITLE__ = "The Kepler Trail"
+    app = None
     debug_info = ""
 
     def __init__(self, lang="en", debug=False):
-        print(f"-> {currentframe().f_lineno}")
         super().__init__(lang, debug)
+        self.app = Flask(__name__, template_folder='flask')
 
     def display_debug_info(self):
-        print(f"-> {currentframe().f_lineno}")
-        self.debug_info = "<Game runs in DEBUG mode>" + f"language: {self.lang}" + f"ai module: {self.ai.getName()}"
+        self.debug_info = f"<pre>&lt;Game runs in DEBUG mode&gt;\nlanguage: {self.lang}\nai module: {self.ai.getName()}</pre>"
 
     def display_status(self):
         print(f"-> {currentframe().f_lineno}")
@@ -47,13 +46,22 @@ class GameUI(IGameUI):
     def quit(self):
         print(f"-> {currentframe().f_lineno}")
 
-@flask_app.route('/')
-def home():
-    print(GameUI.__GAME_TITLE__)
-    return render_template('index.html', title=GameUI.__GAME_TITLE__, iframe="/title", debug_info=GameUI.debug_info)
+    def main_loop(self):
+        @self.app.route('/')
+        def home():
+            return render_template('index.html',
+                                   lang=self.lang,
+                                   title=self.__GAME_TITLE__,
+                                   debug_info=self.debug_info
+                                   )
 
-@flask_app.route('/title')
-def title():
-    return render_template('title.html', title=GameUI.__GAME_TITLE__)
+        @self.app.route('/get_party')
+        def get_party():
+            return render_template('get_party.html',
+                                   lang=self.lang,
+                                   title=self.__GAME_TITLE__,
+                                   debug_info=self.debug_info,
+                                   question=self.msg_json['input']['party_number']
+                                   )
 
-flask_app.run(debug=debug)
+        self.app.run(debug=self.debug)

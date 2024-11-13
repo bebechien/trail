@@ -1,12 +1,14 @@
-<!DOCTYPE html> 
-<html lang="en"> 
-<head> 
-    <meta charset="UTF-8"> 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
-    <title>{{ title }}</title>  <!-- Use the title variable here --> 
-</head> 
-<body>
-    <p>{{ debug_info }}</p>
-    <iframe frameborder="0" noresize="noresize" style="position: absolute; background: transparent; width: 100%; height:100%;" src="{{ iframe }}"></iframe>
-</body> 
-</html> 
+{% extends 'base.html' %}
+
+{% block header %}
+<html lang="{{ lang }}">
+{% endblock %}
+
+{% block debug_info %}
+    {{ debug_info|safe }}
+{% endblock %}
+
+{% block content %}
+    <h1>{% block title %} {{ title }} {% endblock %}</h1>
+    <a href="get_party"><img src="static/title.jpg" width="640px"></a>
+{% endblock %}

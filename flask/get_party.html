@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block header %}
+<html lang="{{ lang }}">
+{% endblock %}
+
+{% block debug_info %}
+{{ debug_info|safe }}
+{% endblock %}
+
+{% block content %}
+<form action="/get_choice" method="POST">
+  <label for="party">{{ question }}</label>
+  <select name="party" id="party">
+    <option value="1">1</option>
+    <option value="2">2</option>
+    <option value="3">3</option>
+    <option value="4">4</option>
+  </select>
+</form>
+{% endblock %}
