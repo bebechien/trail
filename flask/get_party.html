@@ -9,13 +9,28 @@
 {% endblock %}
 
 {% block content %}
-<form action="/get_choice" method="POST">
-  <label for="party">{{ question }}</label>
-  <select name="party" id="party">
-    <option value="1">1</option>
-    <option value="2">2</option>
-    <option value="3">3</option>
-    <option value="4">4</option>
+<p>
+<form method="POST">
+  <label for="party_size">{{ question_num }}</label>
+  <select name="party_size" id="party_size" onchange="this.form.submit()">
+    {% for i in range(max_party) %}
+      <option value="{{ i+1 }}" {% if party_size == i+1 %}selected{% endif %}>{{ i+1 }}</option>
+    {% endfor %}
   </select>
 </form>
+</p>
+
+<p>
+<form action="/game_screen" method="POST">
+  <div id="names">
+    {% if party_size %}
+      {% for i in range(party_size) %}
+        <label for="name_{{ i+1 }}">{{ question_name.format(idx=i+1) }}</label>
+        <input type="text" name="name_{{ i+1 }}"><br>
+      {% endfor %}
+    {% endif %}
+  </div>
+  <button type="submit">Start!</button>
+</form>
+</p>
 {% endblock %}

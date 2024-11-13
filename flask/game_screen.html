@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block header %}
+<html lang="{{ lang }}">
+{% endblock %}
+
+{% block debug_info %}
+    {{ debug_info|safe }}
+{% endblock %}
+
+{% block content %}
+    <h1>Game Screen</h1>
+    {{ names }}
+{% endblock %}
