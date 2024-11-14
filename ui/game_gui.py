@@ -120,30 +120,16 @@ class GameUI(IGameUI):
             True, self.__COLOR_WHITE__
         )
 
-    def display_status(self):
-        print(f"-> {currentframe().f_lineno}")
-
-    def display_travel_result(self, lys, days):
-        print(f"-> {currentframe().f_lineno}")
-
-    def display_rest_result(self, days):
-        print(f"-> {currentframe().f_lineno}")
-
-    def display_search_result(self, days, supply):
-        print(f"-> {currentframe().f_lineno}")
-
     def get_party_members(self):
-        print(f"-> {currentframe().f_lineno}")
+        # TODO
+        print("get party member")
 
     def get_player_choice(self):
-        print(f"-> {currentframe().f_lineno}")
+        # TODO
         return 5
 
-    def check_game_over(self):
-        print(f"-> {currentframe().f_lineno}")
-
     def quit(self):
-        print(f"-> {currentframe().f_lineno}")
+        print("quit..")
 
     def main_loop(self):
         cur_screen_idx = 0
