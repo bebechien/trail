@@ -23,29 +23,29 @@ if "GAME_UI" in os.environ:
 
 match AI_TARGET:
     case "gemma":
-        from gemma import GameAI
+        from ai.gemma import GameAI
 
     case "gemma_ollama":
-        from gemma_ollama import GameAI
+        from ai.gemma_ollama import GameAI
 
     case "gemini":
-        from gemini import GameAI
+        from ai.gemini import GameAI
 
     case _:
-        from scripted import GameAI
+        from ai.scripted import GameAI
 
 match GAME_UI:
     case "gradio":
-        from game_gradio import GameUI
+        from ui.game_gradio import GameUI
 
     case "flask":
-        from game_flask import GameUI
+        from ui.game_flask import GameUI
 
     case "gui":
-        from game_gui import GameUI
+        from ui.game_gui import GameUI
 
     case _:
-        from game_tty import GameUI
+        from ui.game_tty import GameUI
 
 trail = GameUI(LANG, DEBUG)
 game_ai = GameAI(trail)

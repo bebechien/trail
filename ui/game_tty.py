@@ -8,11 +8,6 @@ from game import IGameUI
 class GameUI(IGameUI):
     """Class representing a game UI implemented with Terminal"""
 
-    def display_debug_info(self):
-        print("<Game runs in DEBUG mode>")
-        print(f"language: {self.lang}")
-        print(f"ai module: {self.ai.getName()}")
-
     def print_travel_progress(self):
         """Prints travel progress bar"""
         percent = f"{(100*(self.ly_traveled/float(const.GAME_DESTINATION_DISTANCE))):.1f}"
@@ -24,6 +19,7 @@ class GameUI(IGameUI):
             f"{self.msg_json['ui']['progress']}: |{prog_bar}| {percent}% {self.msg_json['ui']['complete']}")
 
     def display_status(self):
+        """Display current status."""
         print(f"\n--- {self.msg_json['ui']['status']} ---")
         print(
             f"{self.msg_json['ui']['date']}: {self.current_date} | {self.msg_json['ui']['supply']}: {self.supply} {self.msg_json['ui']['supply_unit']} | {self.msg_json['ui']['traveled']}: {self.ly_traveled} {self.msg_json['ui']['traveled_unit']}")
@@ -32,17 +28,6 @@ class GameUI(IGameUI):
         for member in self.party:
             print(
                 f"{member['name']}: {self.msg_json['ui']['health']} - {member['health']}")
-
-    def display_travel_result(self, lys, days):
-        print(self.msg_json['ui']['info_traveled'].format(
-            lys=lys, days=days))
-
-    def display_rest_result(self, days):
-        print(self.msg_json['ui']['info_rested'].format(days=days))
-
-    def display_search_result(self, days, supply):
-        print(self.msg_json['ui']['info_searched'].format(
-            days=days, supply=supply))
 
     def get_party_members(self):
         party_size = int(input(self.msg_json['input']['party_number']))
@@ -64,22 +49,6 @@ class GameUI(IGameUI):
                     print(f"{self.msg_json['err']['invalid_choice']}")
             except ValueError:
                 print(f"{self.msg_json['err']['invalid_input']}")
-
-    def check_game_over(self):
-        if self.ly_traveled >= const.GAME_DESTINATION_DISTANCE:
-            print(self.msg_json['ui']['end_reached'])
-            return True
-        elif self.supply <= 0:
-            print(self.msg_json['ui']['end_no_supply'])
-            return True
-        # Check if all member has 0 health
-        elif all(member["health"] <= 0 for member in self.party):
-            print(self.msg_json['ui']['end_all_died'])
-            return True
-        elif self.current_date >= const.GAME_DEFAULT_END_DATE:
-            print(self.msg_json['ui']['end_time_over'])
-            return True
-        return False
 
     def quit(self):
         print(self.msg_json['ui']['info_quit'])
@@ -104,4 +73,5 @@ class GameUI(IGameUI):
             
             self.remove_dead_members()  # Remove dead members after traveling
             if self.check_game_over():
+                print(self.gameover_result)
                 break

@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block header %}
+<html lang="{{ lang }}">
+{% endblock %}
+
+{% block debug_info %}
+{{ debug_info|safe }}
+{% endblock %}
+
+{% block content %}
+{% if act_result %}
+<h2>{{ act_result }}</h2>
+<hr>
+{% endif %}
+{% if evt_result %}
+<pre>{{ evt_result|safe }}</pre>
+<hr>
+{% endif %}
+<h1>{{ status_title }}</h1>
+<p>{{ status_txt }}</p>
+<p>{{ progress_txt|safe }}</p>
+<hr>
+<h1>{{ party_title }}</h1>
+<ul>
+    {% for member in party %}
+    <li>{{ member['name'] }}: {{ health_txt }} - {{ member['health'] }}</li>
+    {% endfor %}
+</ul>
+<hr>
+<h1>{{ act_title }}</h1>
+<form action="/game_screen" method="POST">
+    {% for action in act_list %}
+        <button type="submit" name="action" value="{{ loop.index }}">{{ action }}</button>
+    {% endfor %}
+</form>
+{% endblock %}

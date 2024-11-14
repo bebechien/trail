@@ -35,6 +35,7 @@ class IGameUI(metaclass=abc.ABCMeta):
     lang = "en"
     debug = False
     msg_json = {}
+    gameover_result = "Unknown"
 
     def __init__(self, lang="en", debug=False):
         """Sets initial game values."""
@@ -43,6 +44,12 @@ class IGameUI(metaclass=abc.ABCMeta):
 
         with open(f"locale/{lang}.json", "r", encoding="utf-8") as f:
             self.msg_json = json.load(f)
+
+    def reset_game(self):
+        self.supply = const.GAME_DEFAULT_SUPPLY
+        self.ly_traveled = 0
+        self.current_date = const.GAME_DEFAULT_START_DATE
+        self.party = []
 
     def set_game_ai(self, ai):
         """Sets a game AI module"""
@@ -119,30 +126,46 @@ class IGameUI(metaclass=abc.ABCMeta):
         if day is not None:
             self.current_date += datetime.timedelta(days=day)
 
-    @abc.abstractmethod
+    def check_game_over(self):
+        if self.ly_traveled >= const.GAME_DESTINATION_DISTANCE:
+            self.gameover_result = self.msg_json['ui']['end_reached']
+            return True
+        elif self.supply <= 0:
+            self.gameover_result = self.msg_json['ui']['end_no_supply']
+            return True
+        # Check if all member has 0 health
+        elif all(member["health"] <= 0 for member in self.party):
+            self.gameover_result = self.msg_json['ui']['end_all_died']
+            return True
+        elif self.current_date >= const.GAME_DEFAULT_END_DATE:
+            self.gameover_result = self.msg_json['ui']['end_time_over']
+            return True
+        return False
+
     def display_debug_info(self):
         """Prints debug information"""
-        raise NotImplementedError
+        print("<Game runs in DEBUG mode>")
+        print(f"language: {self.lang}")
+        print(f"ai module: {self.ai.getName()}")
 
-    @abc.abstractmethod
-    def display_status(self):
-        """Displays the current game status."""
-        raise NotImplementedError
-
-    @abc.abstractmethod
     def display_travel_result(self, lys, days):
         """Display travel result."""
-        raise NotImplementedError
+        print(self.msg_json['ui']['info_traveled'].format(
+            lys=lys, days=days))
 
-    @abc.abstractmethod
+    def display_random_event(self, desc, effect):
+        """Display travel result."""
+        print(self.msg_json['ui']['info_event'].format(
+            desc=desc, effect=effect))
+
     def display_rest_result(self, days):
         """Display rest result."""
-        raise NotImplementedError
+        print(self.msg_json['ui']['info_rested'].format(days=days))
 
-    @abc.abstractmethod
     def display_search_result(self, days, supply):
         """Display search result."""
-        raise NotImplementedError
+        print(self.msg_json['ui']['info_searched'].format(
+            days=days, supply=supply))
 
     @abc.abstractmethod
     def get_party_members(self):
@@ -155,15 +178,10 @@ class IGameUI(metaclass=abc.ABCMeta):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def check_game_over(self):
-        """Checks if game over conditions are met."""
-        raise NotImplementedError
-
-    @abc.abstractmethod
     def quit(self):
         """Quit the game"""
         raise NotImplementedError
-    
+
     @abc.abstractmethod
     def main_loop(self):
         """Main game loop"""
