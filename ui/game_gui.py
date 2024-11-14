@@ -7,6 +7,7 @@ from inspect import currentframe
 
 from game import IGameUI
 
+
 class IGameScreen(metaclass=abc.ABCMeta):
     """Interface Class representing a game UI screen"""
 
@@ -15,7 +16,6 @@ class IGameScreen(metaclass=abc.ABCMeta):
 
     def load_screen(self):
         """Loads required resources for this UI screen"""
-        pass
 
     @abc.abstractmethod
     def process_events(self, event):
@@ -33,14 +33,16 @@ class TitleScreen(IGameScreen):
 
     def __init__(self, game_ui):
         super().__init__(game_ui)
-        self.title_img = pygame.transform.scale(pygame.image.load("static/title.jpg"), (self.game_ui.__GAME_WIDTH__, self.game_ui.__GAME_HEIGHT__))
-        self.title_txt = pygame.font.SysFont(game_ui.__GAME_FONT__, 64).render(self.game_ui.__GAME_TITLE__, True, self.game_ui.__COLOR_WHITE__)
+        self.title_img = pygame.transform.scale(pygame.image.load(
+            "static/title.jpg"), (self.game_ui.__GAME_WIDTH__, self.game_ui.__GAME_HEIGHT__))
+        self.title_txt = pygame.font.SysFont(game_ui.__GAME_FONT__, 64).render(
+            self.game_ui.__GAME_TITLE__, True, self.game_ui.__COLOR_WHITE__)
 
     def process_events(self, event):
         if event.type == pygame.MOUSEBUTTONUP:
             print(event)
             if event.button == 1:
-                self.game_ui.next_screen = 1            
+                self.game_ui.next_screen = 1
 
     def draw_ui(self, surface):
         surface.blit(self.title_img, (0, 0))
@@ -56,13 +58,16 @@ class GetPartyMember(IGameScreen):
 
     def __init__(self, game_ui):
         super().__init__(game_ui)
-        self.question_txt = pygame.font.SysFont(game_ui.__GAME_FONT__, game_ui.__DEFAULT_FONT_SIZE__).render(self.game_ui.msg_json['input']['party_number'], True, self.game_ui.__COLOR_WHITE__)
-        
+        self.question_txt = pygame.font.SysFont(game_ui.__GAME_FONT__, game_ui.__DEFAULT_FONT_SIZE__).render(
+            self.game_ui.msg_json['input']['party_number'], True, self.game_ui.__COLOR_WHITE__)
+
         for i in range(self.__MAX_PARTY_SIZE__):
-            self.member_name.append(pygame.font.SysFont(game_ui.__GAME_FONT__, game_ui.__DEFAULT_FONT_SIZE__).render(self.game_ui.msg_json['input']['member_name'].format(idx=i+1), True, self.game_ui.__COLOR_WHITE__))
+            self.member_name.append(pygame.font.SysFont(game_ui.__GAME_FONT__, game_ui.__DEFAULT_FONT_SIZE__).render(
+                self.game_ui.msg_json['input']['member_name'].format(idx=i+1), True, self.game_ui.__COLOR_WHITE__))
 
     def load_screen(self):
-        self.num_of_party = pygame_gui.elements.UIDropDownMenu(['1', '2', '3', '4'], '1', pygame.Rect((40, 100+self.game_ui.__DEFAULT_FONT_SIZE__*2), (50, 30)), self.game_ui.manager)
+        self.num_of_party = pygame_gui.elements.UIDropDownMenu(['1', '2', '3', '4'], '1', pygame.Rect(
+            (40, 100+self.game_ui.__DEFAULT_FONT_SIZE__*2), (50, 30)), self.game_ui.manager)
 
     def process_events(self, event):
         if event.type == pygame_gui.UI_DROP_DOWN_MENU_CHANGED:
@@ -72,7 +77,8 @@ class GetPartyMember(IGameScreen):
     def draw_ui(self, surface):
         surface.blit(self.question_txt, (40, 100))
         for i in range(self.party_size):
-            surface.blit(self.member_name[i], (400, 100+i*self.game_ui.__DEFAULT_FONT_SIZE__*2))
+            surface.blit(
+                self.member_name[i], (400, 100+i*self.game_ui.__DEFAULT_FONT_SIZE__*2))
 
 
 class GameUI(IGameUI):
@@ -81,7 +87,7 @@ class GameUI(IGameUI):
     __GAME_FONT__ = "나눔고딕코딩"
     __GAME_WIDTH__ = 1280
     __GAME_HEIGHT__ = 720
-    __COLOR_WHITE__ = (255,255,255)
+    __COLOR_WHITE__ = (255, 255, 255)
     __DEFAULT_FONT_SIZE__ = 16
     debug_info = None
     game_screen = []
@@ -94,10 +100,13 @@ class GameUI(IGameUI):
         pygame.font.init()
         # print(pygame.font.get_fonts())
         pygame.display.set_caption(self.__GAME_TITLE__)
-        self.window_surface = pygame.display.set_mode((self.__GAME_WIDTH__, self.__GAME_HEIGHT__))
-        self.background = pygame.Surface((self.__GAME_WIDTH__, self.__GAME_HEIGHT__))
+        self.window_surface = pygame.display.set_mode(
+            (self.__GAME_WIDTH__, self.__GAME_HEIGHT__))
+        self.background = pygame.Surface(
+            (self.__GAME_WIDTH__, self.__GAME_HEIGHT__))
         self.background.fill(pygame.Color('#000000'))
-        self.manager = pygame_gui.UIManager((self.__GAME_WIDTH__, self.__GAME_HEIGHT__))
+        self.manager = pygame_gui.UIManager(
+            (self.__GAME_WIDTH__, self.__GAME_HEIGHT__))
         self.clock = pygame.time.Clock()
 
         self.game_screen.append(TitleScreen(self))
@@ -110,7 +119,7 @@ class GameUI(IGameUI):
             f"<Game runs in DEBUG mode>\nlanguage: {self.lang}\nai module: {self.ai.getName()}",
             True, self.__COLOR_WHITE__
         )
-        
+
     def display_status(self):
         print(f"-> {currentframe().f_lineno}")
 
@@ -158,7 +167,7 @@ class GameUI(IGameUI):
 
             self.manager.draw_ui(self.window_surface)
 
-            if(self.next_screen != cur_screen_idx):
+            if (self.next_screen != cur_screen_idx):
                 cur_screen_idx = self.next_screen
                 self.game_screen[cur_screen_idx].load_screen()
 

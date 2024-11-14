@@ -1,8 +1,6 @@
 """This module defines a game UI class implemented with Flask"""
 
 from flask import Flask, render_template, request
-import os
-from inspect import currentframe
 import const
 
 from game import IGameUI
@@ -16,7 +14,7 @@ class GameUI(IGameUI):
     debug_info = ""
     party_size = 1
     is_party_loaded = False
-    aciton_result = None
+    action_result = None
     event_result = None
 
     def __init__(self, lang="en", debug=False):
@@ -131,9 +129,6 @@ class GameUI(IGameUI):
                 self.msg_json['ui']['act_status'],
                 self.msg_json['ui']['act_quit']
             ]
-
-            print(f"mumu - {self.action_result}")
-            print(f"haha - {self.event_result}")
 
             return render_template('game_screen.html',
                                    lang=self.lang,
