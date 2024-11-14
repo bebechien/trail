@@ -9,7 +9,15 @@ from game import IGameUI
 class GameUI(IGameUI):
     """Class representing a game UI implemented with Flask"""
     __GAME_TITLE__ = "The Kepler Trail"
+    __IMG_TITLE__ = "static/title.jpg"
+    __IMG_GET_PARTY__ = "static/get_party.jpg"
+    __IMG_TRAVEL__ = "static/travel.jpg"
+    __IMG_REST__ = "static/rest.jpg"
+    __IMG_SEARCH__ = "static/search.jpg"
+    __IMG_GAMEOVER__ = "static/gameover.jpg"
+
     __MAX_PARTY_NUMBER__ = 4
+
     app = None
     debug_info = ""
     party_size = 1
@@ -61,7 +69,8 @@ class GameUI(IGameUI):
             return render_template('index.html',
                                    lang=self.lang,
                                    title=self.__GAME_TITLE__,
-                                   debug_info=self.debug_info
+                                   debug_info=self.debug_info,
+                                   bg_image=self.__IMG_TITLE__
                                    )
 
         @self.app.route('/get_party', methods=['GET', 'POST'])
@@ -78,7 +87,8 @@ class GameUI(IGameUI):
                                    question_num=self.msg_json['input']['party_number'],
                                    question_name=self.msg_json['input']['member_name'],
                                    max_party=self.__MAX_PARTY_NUMBER__,
-                                   party_size=self.party_size
+                                   party_size=self.party_size,
+                                   bg_image=self.__IMG_GET_PARTY__
                                    )
 
         @self.app.route('/game_screen', methods=['POST'])
@@ -89,32 +99,37 @@ class GameUI(IGameUI):
 
             self.action_result = None
             self.event_result = None
+            bg_img = self.__IMG_TRAVEL__
             choice = self.get_player_choice()
             if choice == 1:
                 self.travel()
                 self.random_event()
             elif choice == 2:
                 self.rest()
+                bg_img = self.__IMG_REST__
             elif choice == 3:
                 self.search()
+                bg_img = self.__IMG_SEARCH__
             elif choice == 5:
                 self.quit()
                 return render_template('quit.html',
                                        lang=self.lang,
                                        title=self.__GAME_TITLE__,
                                        debug_info=self.debug_info,
-                                       msg=self.msg_json['ui']['info_quit']
+                                       msg=self.msg_json['ui']['info_quit'],
                                        )
 
             self.remove_dead_members()
             if self.check_game_over():
+                bg_img = self.__IMG_GAMEOVER__
                 return render_template('game_over.html',
                                        lang=self.lang,
                                        title=self.__GAME_TITLE__,
                                        debug_info=self.debug_info,
                                        act_result=self.action_result,
                                        evt_result=self.event_result,
-                                       result=self.gameover_result
+                                       result=self.gameover_result,
+                                       bg_image=bg_img
                                        )
 
             status_txt = f"{self.msg_json['ui']['date']}: {self.current_date} | {self.msg_json['ui']['supply']}: {self.supply} {self.msg_json['ui']['supply_unit']} | {self.msg_json['ui']['traveled']}: {self.ly_traveled} {self.msg_json['ui']['traveled_unit']}"
@@ -144,7 +159,8 @@ class GameUI(IGameUI):
                                    act_list=act_list,
                                    act_txt=self.msg_json['input']['choose_action'],
                                    act_result=self.action_result,
-                                   evt_result=self.event_result
+                                   evt_result=self.event_result,
+                                   bg_image=bg_img
                                    )
 
         self.app.run(debug=self.debug)
