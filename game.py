@@ -16,7 +16,8 @@ class IGameAI(metaclass=abc.ABCMeta):
         self.app = app
         self.name = name
 
-    def getName(self):
+    def get_name(self):
+        """Returns the name of AI"""
         return self.name
 
     @abc.abstractmethod
@@ -146,7 +147,7 @@ class IGameUI(metaclass=abc.ABCMeta):
         """Prints debug information"""
         print("<Game runs in DEBUG mode>")
         print(f"language: {self.lang}")
-        print(f"ai module: {self.ai.getName()}")
+        print(f"ai module: {self.ai.get_name()}")
 
     def display_travel_result(self, lys, days):
         """Display travel result."""

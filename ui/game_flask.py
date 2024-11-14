@@ -22,7 +22,7 @@ class GameUI(IGameUI):
         self.app = Flask(__name__, template_folder='flask')
 
     def display_debug_info(self):
-        self.debug_info = f"<pre>&lt;Game runs in DEBUG mode&gt;\nlanguage: {self.lang}\nai module: {self.ai.getName()}</pre>"
+        self.debug_info = f"<pre>&lt;Game runs in DEBUG mode&gt;\nlanguage: {self.lang}\nai module: {self.ai.get_name()}</pre>"
 
     def display_travel_result(self, lys, days):
         self.action_result = self.msg_json['ui']['info_traveled'].format(

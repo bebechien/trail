@@ -116,7 +116,7 @@ class GameUI(IGameUI):
 
     def display_debug_info(self):
         self.debug_info = pygame.font.SysFont(self.__GAME_FONT__, self.__DEFAULT_FONT_SIZE__).render(
-            f"<Game runs in DEBUG mode>\nlanguage: {self.lang}\nai module: {self.ai.getName()}",
+            f"<Game runs in DEBUG mode>\nlanguage: {self.lang}\nai module: {self.ai.get_name()}",
             True, self.__COLOR_WHITE__
         )
 
