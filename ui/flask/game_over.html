@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block header %}
+<html lang="{{ lang }}">
+{% endblock %}
+
+{% block debug_info %}
+{{ debug_info|safe }}
+{% endblock %}
+
+{% block content %}
+
+<div id="event-message">
+{% if act_result %}
+{{ act_result }}
+{% endif %}
+{% if evt_result %}
+<pre>{{ evt_result }}</pre>
+{% endif %}
+</div>
+
+<div id="status">
+<h1>GAME OVER</h1>
+<p>{{ result }}</p>
+</div>
+
+<div id="action-buttons">
+<form action="get_party">
+    <button type="submit">Try again</button>
+</form>
+</div>
+{% endblock %}
