@@ -47,6 +47,7 @@ class IGameUI(metaclass=abc.ABCMeta):
             self.msg_json = json.load(f)
 
     def reset_game(self):
+        """Reset in-game values"""
         self.supply = const.GAME_DEFAULT_SUPPLY
         self.ly_traveled = 0
         self.current_date = const.GAME_DEFAULT_START_DATE
@@ -128,6 +129,7 @@ class IGameUI(metaclass=abc.ABCMeta):
             self.current_date += datetime.timedelta(days=day)
 
     def check_game_over(self):
+        """Checks game over conditions"""
         if self.ly_traveled >= const.GAME_DESTINATION_DISTANCE:
             self.gameover_result = self.msg_json['ui']['end_reached']
             return True
