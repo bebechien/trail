@@ -16,8 +16,6 @@ class GameUI(IGameUI):
     __IMG_SEARCH__ = "static/search.jpg"
     __IMG_GAMEOVER__ = "static/gameover.jpg"
 
-    __MAX_PARTY_NUMBER__ = 4
-
     app = None
     debug_info = ""
     party_size = 1
@@ -86,7 +84,7 @@ class GameUI(IGameUI):
                                    debug_info=self.debug_info,
                                    question_num=self.msg_json['input']['party_number'],
                                    question_name=self.msg_json['input']['member_name'],
-                                   max_party=self.__MAX_PARTY_NUMBER__,
+                                   max_party=const.GAME_MAX_PARTY_NUMBER,
                                    party_size=self.party_size,
                                    bg_image=self.__IMG_GET_PARTY__
                                    )

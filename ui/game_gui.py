@@ -89,6 +89,7 @@ class GameUI(IGameUI):
     __GAME_HEIGHT__ = 720
     __COLOR_WHITE__ = (255, 255, 255)
     __DEFAULT_FONT_SIZE__ = 16
+
     debug_info = None
     game_screen = []
     next_screen = 0

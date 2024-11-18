@@ -32,6 +32,7 @@
     "end_time_over": "\nGame Over! You didn't reach the Kepler-186f before year ends."
   },
   "err": {
+    "invalid_party_num": "Invalid party number. Please enter a number between 1 and {max}.",
     "invalid_choice": "Invalid choice. Please enter a number between 1 and 5.",
     "invalid_input": "Invalid input. Please enter a number."
   }
