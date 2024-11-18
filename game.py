@@ -36,6 +36,7 @@ class IGameUI(metaclass=abc.ABCMeta):
     lang = "en"
     debug = False
     msg_json = {}
+    game_cleared = False
     gameover_result = "Unknown"
 
     def __init__(self, lang="en", debug=False):
@@ -52,6 +53,8 @@ class IGameUI(metaclass=abc.ABCMeta):
         self.ly_traveled = 0
         self.current_date = const.GAME_DEFAULT_START_DATE
         self.party = []
+        self.game_cleared = False
+        self.gameover_result = "Unknown"
 
     def set_game_ai(self, ai):
         """Sets a game AI module"""
@@ -131,6 +134,7 @@ class IGameUI(metaclass=abc.ABCMeta):
     def check_game_over(self):
         """Checks game over conditions"""
         if self.ly_traveled >= const.GAME_DESTINATION_DISTANCE:
+            self.game_cleared = True
             self.gameover_result = self.msg_json['ui']['end_reached']
             return True
         elif self.supply <= 0:
