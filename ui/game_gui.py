@@ -4,6 +4,7 @@ import abc
 import pygame
 import pygame_gui
 from inspect import currentframe
+import const
 
 from game import IGameUI
 
@@ -34,19 +35,18 @@ class TitleScreen(IGameScreen):
     def __init__(self, game_ui):
         super().__init__(game_ui)
         self.title_img = pygame.transform.scale(pygame.image.load(
-            "static/title.jpg"), (self.game_ui.__GAME_WIDTH__, self.game_ui.__GAME_HEIGHT__))
+            game_ui.__IMG_TITLE__), (game_ui.__GAME_WIDTH__, game_ui.__GAME_HEIGHT__))
         self.title_txt = pygame.font.SysFont(game_ui.__GAME_FONT__, 64).render(
-            self.game_ui.__GAME_TITLE__, True, self.game_ui.__COLOR_WHITE__)
+            game_ui.__GAME_TITLE__, True, game_ui.__COLOR_WHITE__)
 
     def process_events(self, event):
         if event.type == pygame.MOUSEBUTTONUP:
-            print(event)
             if event.button == 1:
                 self.game_ui.next_screen = 1
 
     def draw_ui(self, surface):
         surface.blit(self.title_img, (0, 0))
-        surface.blit(self.title_txt, (40, 100))
+        surface.blit(self.title_txt, (40, 120))
 
 
 class GetPartyMember(IGameScreen):
@@ -58,16 +58,22 @@ class GetPartyMember(IGameScreen):
 
     def __init__(self, game_ui):
         super().__init__(game_ui)
-        self.question_txt = pygame.font.SysFont(game_ui.__GAME_FONT__, game_ui.__DEFAULT_FONT_SIZE__).render(
-            self.game_ui.msg_json['input']['party_number'], True, self.game_ui.__COLOR_WHITE__)
+        self.bg_img = pygame.transform.scale(pygame.image.load(
+            game_ui.__IMG_GET_PARTY__), (game_ui.__GAME_WIDTH__, game_ui.__GAME_HEIGHT__))
 
-        for i in range(self.__MAX_PARTY_SIZE__):
+        self.question_txt = pygame.font.SysFont(game_ui.__GAME_FONT__, game_ui.__DEFAULT_FONT_SIZE__).render(
+            game_ui.msg_json['input']['party_number'], True, game_ui.__COLOR_WHITE__)
+
+        for i in range(const.GAME_MAX_PARTY_NUMBER):
             self.member_name.append(pygame.font.SysFont(game_ui.__GAME_FONT__, game_ui.__DEFAULT_FONT_SIZE__).render(
-                self.game_ui.msg_json['input']['member_name'].format(idx=i+1), True, self.game_ui.__COLOR_WHITE__))
+                game_ui.msg_json['input']['member_name'].format(idx=i+1), True, game_ui.__COLOR_WHITE__))
 
     def load_screen(self):
-        self.num_of_party = pygame_gui.elements.UIDropDownMenu(['1', '2', '3', '4'], '1', pygame.Rect(
-            (40, 100+self.game_ui.__DEFAULT_FONT_SIZE__*2), (50, 30)), self.game_ui.manager)
+        party_number = []
+        for i in range(const.GAME_MAX_PARTY_NUMBER):
+            party_number.append(str(i+1))
+        self.num_of_party = pygame_gui.elements.UIDropDownMenu(party_number, '1', pygame.Rect(
+            (40, 120+self.game_ui.__DEFAULT_FONT_SIZE__*2), (50, 30)), self.game_ui.manager)
 
     def process_events(self, event):
         if event.type == pygame_gui.UI_DROP_DOWN_MENU_CHANGED:
@@ -75,20 +81,24 @@ class GetPartyMember(IGameScreen):
                 self.party_size = int(event.text)
 
     def draw_ui(self, surface):
-        surface.blit(self.question_txt, (40, 100))
+        surface.blit(self.bg_img, (0, 0))
+        surface.blit(self.question_txt, (40, 120))
         for i in range(self.party_size):
             surface.blit(
-                self.member_name[i], (400, 100+i*self.game_ui.__DEFAULT_FONT_SIZE__*2))
+                self.member_name[i], (400, 120+i*self.game_ui.__DEFAULT_FONT_SIZE__*2))
 
 
 class GameUI(IGameUI):
     """Class representing a game UI implemented with Pygame"""
     __GAME_TITLE__ = "The Kepler Trail"
-    __GAME_FONT__ = "나눔고딕코딩"
+    __GAME_FONT__ = "malgungothic"
     __GAME_WIDTH__ = 1280
     __GAME_HEIGHT__ = 720
     __COLOR_WHITE__ = (255, 255, 255)
-    __DEFAULT_FONT_SIZE__ = 16
+    __DEFAULT_FONT_SIZE__ = 18
+
+    __IMG_TITLE__ = "ui/static/title.jpg"
+    __IMG_GET_PARTY__ = "ui/static/get_party.jpg"
 
     debug_info = None
     game_screen = []
@@ -100,6 +110,9 @@ class GameUI(IGameUI):
         pygame.init()
         pygame.font.init()
         # print(pygame.font.get_fonts())
+        if lang=="ja":
+            self.__GAME_FONT__ = "meiryo"
+
         pygame.display.set_caption(self.__GAME_TITLE__)
         self.window_surface = pygame.display.set_mode(
             (self.__GAME_WIDTH__, self.__GAME_HEIGHT__))
@@ -117,7 +130,7 @@ class GameUI(IGameUI):
 
     def display_debug_info(self):
         self.debug_info = pygame.font.SysFont(self.__GAME_FONT__, self.__DEFAULT_FONT_SIZE__).render(
-            f"<Game runs in DEBUG mode>\nlanguage: {self.lang}\nai module: {self.ai.get_name()}",
+            f"<Game runs in DEBUG mode>\nlanguage: {self.lang}\nai module: {self.ai.get_name()}\nfont: {self.__GAME_FONT__}",
             True, self.__COLOR_WHITE__
         )
 
@@ -150,7 +163,7 @@ class GameUI(IGameUI):
 
             self.game_screen[cur_screen_idx].draw_ui(self.window_surface)
             if (self.debug_info):
-                self.window_surface.blit(self.debug_info, (20, 20))
+                self.window_surface.blit(self.debug_info, (10, 10))
 
             self.manager.draw_ui(self.window_surface)
 
