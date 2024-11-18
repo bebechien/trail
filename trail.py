@@ -35,9 +35,6 @@ match AI_TARGET:
         from ai.scripted import GameAI
 
 match GAME_UI:
-    case "gradio":
-        from ui.game_gradio import GameUI
-
     case "flask":
         from ui.game_flask import GameUI
 
