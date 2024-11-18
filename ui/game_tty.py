@@ -30,11 +30,20 @@ class GameUI(IGameUI):
                 f"{member['name']}: {self.msg_json['ui']['health']} - {member['health']}")
 
     def get_party_members(self):
-        party_size = int(input(self.msg_json['input']['party_number']))
-        for i in range(party_size):
-            name = input(self.msg_json['input']['member_name'].format(idx=i+1))
-            self.party.append(
-                {"name": name, "health": const.GAME_DEFAULT_HEALTH_MAX})
+        while True:
+            try:
+                party_size = int(input(self.msg_json['input']['party_number']))
+                if 1 <= party_size <= const.GAME_MAX_PARTY_NUMBER:
+                    for i in range(party_size):
+                        name = input(self.msg_json['input']['member_name'].format(idx=i+1))
+                        self.party.append(
+                            {"name": name, "health": const.GAME_DEFAULT_HEALTH_MAX})
+                        
+                    return
+                else:
+                    print(self.msg_json['err']['invalid_party_num'].format(max=const.GAME_MAX_PARTY_NUMBER))
+            except ValueError:
+                print(f"{self.msg_json['err']['invalid_input']}")
 
     def get_player_choice(self):
         while True:
