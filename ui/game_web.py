@@ -14,6 +14,7 @@ class GameUI(IGameUI):
     __IMG_TRAVEL__ = "static/travel.jpg"
     __IMG_REST__ = "static/rest.jpg"
     __IMG_SEARCH__ = "static/search.jpg"
+    __ING_CONGRATS__ = "static/congrats.jpg"
     __IMG_GAMEOVER__ = "static/gameover.jpg"
 
     app = None
@@ -120,6 +121,8 @@ class GameUI(IGameUI):
             self.remove_dead_members()
             if self.check_game_over():
                 bg_img = self.__IMG_GAMEOVER__
+                if self.game_cleared:
+                    bg_img = self.__ING_CONGRATS__
                 return render_template('game_over.html',
                                        lang=self.lang,
                                        title=self.__GAME_TITLE__,
