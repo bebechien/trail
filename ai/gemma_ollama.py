@@ -1,6 +1,5 @@
 """This module defines a game AI class implemented with ollama"""
 
-import os
 import requests
 import json
 import jsonschema
@@ -58,8 +57,16 @@ class GameAI(IGameAI):
                     event['effect']['supply'] = int(event['effect']['supply'])
                 if "health" in event['effect']:
                     event['effect']['health'] = int(event['effect']['health'])
+                    if event['effect']['health'] < -2:
+                        event['effect']['health'] = -2
+                    elif event['effect']['health'] > 2:
+                        event['effect']['health'] = 2
                 if "day" in event['effect']:
                     event['effect']['day'] = int(event['effect']['day'])
+                    if event['effect']['day'] < 0:
+                        event['effect']['day'] = 0
+                    elif event['effect']['day'] > 2:
+                        event['effect']['day'] = 2
 
                 jsonschema.validate(
                     instance=event, schema=const.EVENT_JSON_SCHEMA)
