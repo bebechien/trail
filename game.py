@@ -43,8 +43,10 @@ class IGameUI(metaclass=abc.ABCMeta):
         """Sets initial game values."""
         self.lang = lang
         self.debug = debug
+        self.load_text_res()
 
-        with open(f"locale/{lang}.json", "r", encoding="utf-8") as f:
+    def load_text_res(self):
+        with open(f"locale/{self.lang}.json", "r", encoding="utf-8") as f:
             self.msg_json = json.load(f)
 
     def reset_game(self):

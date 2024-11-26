@@ -63,8 +63,13 @@ class GameUI(IGameUI):
         print("quit..")
 
     def main_loop(self):
-        @self.app.route('/')
+        @self.app.route('/', methods=['GET', 'POST'])
         def home():
+            if request.method == 'POST':
+                self.lang = request.form['language']
+                self.display_debug_info()
+                self.load_text_res()
+
             return render_template('index.html',
                                    lang=self.lang,
                                    title=self.__GAME_TITLE__,
