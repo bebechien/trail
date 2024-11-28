@@ -27,6 +27,7 @@ class GameAI(IGameAI):
         """Generate and validate event."""
         num_of_try = 0
         prompt = const.EVENT_GENERATION_PROMPT.format(lang="")
+        self.event_example = const.EVENT_JSON_EXAMPLE_STR
         if self.app.lang == "ko":
             prompt = const.EVENT_GENERATION_PROMPT.format(lang=" in Korean")
             self.event_example = const.EVENT_JSON_EXAMPLE_STR_KO
