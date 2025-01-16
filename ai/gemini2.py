@@ -22,10 +22,7 @@ class GameAI(IGameAI):
 
     def __init__(self, app):
         super().__init__(app, f"{self.__model_name__}")
-        #self.client = genai.Client(api_key=os.environ["GEMINI_API_KEY"]), http_options={
-        #    'api_version': 'v1beta',
-        #    'url': 'https://generativelanguage.googleapis.com/{api_version}/'})
-        self.client = genai.Client(api_key=os.environ["GOOGLE_API_KEY"])
+        self.client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
 
     def generate_event(self):
         """Generate and validate event."""
