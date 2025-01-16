@@ -3,6 +3,7 @@ jsonschema
 keras-nlp
 
 # optional
-google-generativeai # if you use gemini.py
+#google-generativeai # if you use gemini.py
+google-genai # if you use gemini2.py
 flask # if you use webui
 #pygame_gui # if you use gui

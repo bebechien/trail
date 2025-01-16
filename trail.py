@@ -30,6 +30,8 @@ match AI_TARGET:
 
     case "gemini":
         from ai.gemini import GameAI
+    case "gemini2":
+        from ai.gemini2 import GameAI
 
     case _:
         from ai.scripted import GameAI
