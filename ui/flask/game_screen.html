@@ -17,6 +17,16 @@
 {% if evt_result %}
 <pre>{{ evt_result|safe }}</pre>
 {% endif %}
+{% if evt_image %}
+<img src="{{ evt_image }}" width=240 align="left"/>
+{% endif %}
+{% if evt_audio %}
+<audio id='narrator' src="{{ evt_audio }}" autoplay>
+{% else %}
+<audio id='narrator' src="" autoplay>
+{% endif %}
+</audio>
+
 </div>
 
 <div id="status">

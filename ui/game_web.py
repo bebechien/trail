@@ -103,6 +103,8 @@ class GameUI(IGameUI):
 
             self.action_result = None
             self.event_result = None
+            self.random_event_img = None
+            self.random_event_aud = None
             bg_img = self.__IMG_TRAVEL__
             choice = self.get_player_choice()
             if choice == 1:
@@ -166,7 +168,9 @@ class GameUI(IGameUI):
                                    act_txt=self.msg_json['input']['choose_action'],
                                    act_result=self.action_result,
                                    evt_result=self.event_result,
-                                   bg_image=bg_img
+                                   bg_image=bg_img,
+                                   evt_image=self.random_event_img,
+                                   evt_audio=self.random_event_aud
                                    )
 
         self.app.run(debug=self.debug)
