@@ -174,7 +174,7 @@ class GameUI(IGameUI):
                                    evt_audio=self.random_event_aud
                                    )
 
-        if ngrok:
+        if self.ngrok:
             self.app.run()
         else:
             self.app.run(debug=self.debug)
