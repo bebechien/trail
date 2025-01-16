@@ -18,6 +18,7 @@ class GameUI(IGameUI):
     __IMG_GAMEOVER__ = "static/gameover.jpg"
 
     app = None
+    ngrok = False
     debug_info = ""
     party_size = 1
     is_party_loaded = False
@@ -173,4 +174,7 @@ class GameUI(IGameUI):
                                    evt_audio=self.random_event_aud
                                    )
 
-        self.app.run(debug=self.debug)
+        if ngrok:
+            self.app.run()
+        else:
+            self.app.run(debug=self.debug)
